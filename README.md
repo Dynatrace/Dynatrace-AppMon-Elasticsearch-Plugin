@@ -1,6 +1,6 @@
-# Dynatrace-IBM-WebSphere-Commerce-Fastpack
+# Dynatrace-Elasticsearch-Plugin
 
-![images_community/download/attachments/210011839/icon.png](/images_community/download/attachments/210011839/icon.png)
+![testresources/icon.png](/testresources/icon.png)
 
 The Dynatrace FastPack for Elasticsearch provides a plugin for Dynatrace which collects various metrics from an Elasticsearch Cluster and sends them to a Dynatrace instance. It also provides a System Profile and a sample Dashboard which visualizes some of the metrics.
 
