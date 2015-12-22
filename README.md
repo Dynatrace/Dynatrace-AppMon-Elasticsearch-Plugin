@@ -12,7 +12,7 @@ Find further information in the [dynaTrace community](https://community.compuwar
 
 ### Install the plugin
 
-Download the .dtp file and install it on the Dynatrace Server
+Download the .dtp file from the release-area and install it on the Dynatrace Server
 
 ### Configure the Elasticsearch Monitor
 
