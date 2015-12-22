@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Created-By: 24.60-b09 (Oracle Corporation)
+Require-Bundle: com.dynatrace.diagnostics.sdk,com.dynatrace.diagnostic
+ s.util
+Bundle-Vendor: Dynatrace LLC
+Bundle-ClassPath: .
+Bundle-Version: 6.0.0.7027
+Dynatrace-Plugin-Types: monitor, metric
+Bundle-Name: Elasticsearch Monitor
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: com.dynatrace.diagnostics.plugin.ElasticsearchMonitor;singleton:=true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Localization: plugin
+Built-By: dominik.stadler
+Implementation-Version: 6.0.0.7027
+

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Elasticsearch Monitor Plugin" default="all">
+	<description>
+		Elasticsearch Monitor Plugin
+	</description>
+
+	<property name="bundle.symbolic.name" value="elasticsearchmonitor" />
+	<property name="dir.dist" value="dist" />
+
+	<!-- ================================= 
+          target: all
+         ================================= -->
+	<target name="all" depends="init, link" unless="built" description="Elasticsearch Monitor Plugin">
+		<echo>Done</echo>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+	          target: init                      
+	         - - - - - - - - - - - - - - - - - -->
+	<target name="init" unless="built">
+		<mkdir dir="${dir.dist}"/>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+	          target: clean                      
+	         - - - - - - - - - - - - - - - - - -->
+	<target name="clean" depends="" description="clean up">
+		<delete dir="build" />
+		<delete dir="${dir.dist}"/>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: link                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="link" depends="init">
+		<echo message="Build dtp file for Elasticsearch Monitor at ${dir.dist}/${bundle.symbolic.name}_${version}.dtp"/>
+
+		<!-- trigger a rebuild every time -->
+		<delete failonerror="no">
+			<fileset dir="${dir.dist}" includes="${bundle.symbolic.name}*.dtp" />
+		</delete>
+
+		<!-- cut out passwords to never inadvertedely publish them as part of the systemprofile! -->
+		<replaceregexp flags="sg">
+			<!-- <property typeid="password" value="xyz==" key="password" /> -->
+			<regexp pattern='&lt;property[^>]+typeid="password"[^>]+/>' />
+			<substitution expression="" />
+			<fileset dir=".">
+				<include name="profiles/*.xml" />
+			</fileset>
+		</replaceregexp>
+		<!-- cut out username -->
+		<replaceregexp flags="sg">
+			<!-- <property typeid="string" value="bla" key="user" /> -->
+			<regexp pattern='&lt;property[^>]+key="user"[^>]+/>' />
+			<substitution expression="" />
+			<fileset dir=".">
+				<include name="profiles/*.xml" />
+			</fileset>
+		</replaceregexp>
+		<!-- replace any url with localhost -->
+		<replaceregexp flags="sg">
+			<!-- <property typeid="string" value="http://somhost:9200" key="url" /> -->
+			<regexp pattern='value="[^"]+" key="url"' />
+			<substitution expression='value="http://localhost:9200" key="url"' />
+			<fileset dir=".">
+				<include name="profiles/*.xml" />
+			</fileset>
+		</replaceregexp>
+
+		<!-- Replace some things in the Dashboard as well -->
+		<replaceregexp flags="sg">
+			<!-- agenthost="somevalue" -->
+			<regexp pattern='agenthost="[^"]+"' />
+			<substitution expression='agenthost="localhost"' />
+			<fileset dir=".">
+				<include name="dashboards/*.xml" />
+			</fileset>
+		</replaceregexp>
+		<!-- replace authornames -->
+		<replaceregexp flags="sg">
+			<!-- modifiedbyname="someone" -->
+			<regexp pattern='modifiedbyname="[^"]+"' />
+			<substitution expression='modifiedbyname="Dynatrace"' />
+			<fileset dir=".">
+				<include name="dashboards/*.xml" />
+			</fileset>
+		</replaceregexp>
+		<replaceregexp flags="sg">
+			<!-- authorname="someone" -->
+			<regexp pattern='authorname="[^"]+"' />
+			<substitution expression='authorname="Dynatrace"' />
+			<fileset dir=".">
+				<include name="dashboards/*.xml" />
+			</fileset>
+		</replaceregexp>
+		
+		<!-- ensure that all the documents are at least well-formed, i.e. nobody made illegal manual changes -->
+		<xmlvalidate lenient="true">
+			<fileset dir=".">
+				<include name="dashboards/*.xml"/>
+				<include name="profiles/*.xml"/>
+				<include name="sensors/**/*.xml"/>
+				<include name="sessions/**/*.xml"/>
+				<include name="plugin.xml"/>
+			</fileset>
+			<fileset dir="..">
+				<include name="plugin.xml"/>
+			</fileset>
+		</xmlvalidate>
+		
+		<jar jarfile="${dir.dist}/${bundle.symbolic.name}_${version}.dtp" manifest="META-INF/MANIFEST.MF">
+			<fileset dir=".">
+				<include name="plugin.xml" />
+				<include name="plugin.properties" />
+				<include name="sensors/**"/>
+				<include name="sessions/**"/>
+				<include name="plugin/**"/>
+				<include name="dashboards/**" />
+				<include name="profiles/**" />
+			</fileset>
+		</jar>
+	</target>
+</project>

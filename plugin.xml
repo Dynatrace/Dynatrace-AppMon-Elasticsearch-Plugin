@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+  <extension point="com.dynatrace.diagnostics.pdk.pluginconfig" id="com.dynatrace.diagnostics.elasticsearch" name="Elasticsearch Monitor">
+    <information>
+      <category value="" />
+      <description value="%PLUGIN_CONFIG_DESCRIPTION" />
+      <license value="DynatraceBSD.txt" />
+      <displayname
+            value="%PLUGIN_CONFIG_NAME">
+      </displayname>
+      <!-- supportlevel value="certified"/ -->
+    </information>
+    <configuration>
+		<property key="url" label="Elasticsearch REST URL" type="string" description="The URL where the Elasticsearch Cluster REST interface is available" default="http://localhost:9200" multiline="false" />
+		<property key="user" label="User" type="string" description="User name to use to connect via Basic Authentication, leave empty for unauthenticated access" default="" multiline="false" />
+		<property key="password" label="Password" type="password" description="Password if authentication is required, leave empty for unauthenticated access" default="" />
+		<property key="timeout" label="Timeout" type="long" description="Timeout in milliseconds used when accessing the REST interface via HTTP" default="60000" />
+    </configuration>
+  </extension>
+
+  <extension point="com.dynatrace.diagnostics.pdk.monitor" id="com.dynatrace.diagnostics.elasticsearch.monitor" name="Elasticsearch Monitor">
+    <plugin configid="com.dynatrace.diagnostics.elasticsearch" class="com.dynatrace.diagnostics.plugins.elasticsearch.ElasticsearchMonitor" />
+    <information>
+       <displayname
+             value="%MONITOR_NAME">
+       </displayname>
+    </information>
+  </extension>
+
+  <extension point="com.dynatrace.diagnostics.pdk.monitormetricgroup" 
+  	id="com.dynatrace.diagnostics.elasticsearch.monitor.metrics" name="Elasticsearch Monitor">
+    <metricgroup monitorid="com.dynatrace.diagnostics.elasticsearch.monitor">
+      <metric name="NodeCount" description="Number of active nodes" unit="number" defaultrate="purepath" />
+      <metric name="DataNodeCount" description="Number of active data nodes" unit="number" defaultrate="purepath" />
+
+      <metric name="ActivePrimaryShards" description="The number of primary shards that are used across the cluster" unit="number" defaultrate="purepath" />
+      <metric name="ActiveShardsPercent" description="Percentage of shards that are active, a green cluster should have 100% here" unit="percent" defaultrate="purepath" />
+      <metric name="ActiveShards" description="The number of shards (primary and replica) that are used across the cluster" unit="number" defaultrate="purepath" />
+      <metric name="RelocatingShards" description="The number of shards that are currently relocated" unit="number" defaultrate="purepath" />
+      <metric name="InitializingShards" description="The number of shards that are currently initializing" unit="number" defaultrate="purepath" />
+      <metric name="UnassignedShards" description="The number of shards that are currently uninitialized" unit="number" defaultrate="purepath" />
+      <metric name="DelayedUnassignedShards" description="The number of shards that are in delayed state" unit="number" defaultrate="purepath" />
+ 
+      <metric name="InitHeap" description="The number of bytes currently initialized on the heap per node" unit="bytes" defaultrate="purepath" />
+      <metric name="MaxHeap" description="The number of bytes of heap-memory that can be used at max per node" unit="bytes" defaultrate="purepath" />
+      <metric name="InitNonHeap" description="The number of bytes currently initialized off-heap per node" unit="bytes" defaultrate="purepath" />
+      <metric name="MaxNonHeap" description="The number of bytes of off-heap memory that can be used at max per node" unit="bytes" defaultrate="purepath" />
+      <metric name="MaxDirect" description="The number of bytes of direct memory that can be used per node" unit="bytes" defaultrate="purepath" />
+
+      <metric name="IndexCount" description="The count of indexes" unit="number" defaultrate="purepath" />
+      <metric name="ShardCount" description="The number of shards with dynamic splittings by state" unit="number" defaultrate="purepath" />
+
+      <metric name="DocCount" description="Number of documents" unit="number" defaultrate="purepath" />
+      <metric name="DeletedCount" description="Number of deleted documents" unit="number" defaultrate="purepath" />
+      
+      <metric name="StoreSize" description="Size of storage overall per node" unit="bytes" defaultrate="purepath" />
+      <metric name="StoreThrottleTime" description="Time that storing was throttled per node" calculatedelta="true" unit="ms" defaultrate="purepath" />
+      <metric name="IndexingThrottleTime" description="Time that indexing was throttled per node" calculatedelta="true" unit="ms" defaultrate="purepath" />
+      <metric name="IndexingCurrent" description="Currently active indexing operations per node" unit="number" defaultrate="purepath" />
+      <metric name="DeleteCurrent" description="Currently active delete operations per node" unit="number" defaultrate="purepath" />
+      <metric name="QueryCurrent" description="Currently active query operations per node" unit="number" defaultrate="purepath" />
+      <metric name="FetchCurrent" description="Currently active fetch operations per node" unit="number" defaultrate="purepath" />
+      <metric name="ScrollCurrent" description="Currently active scroll operations per node" unit="number" defaultrate="purepath" />
+      <metric name="QueryCacheSize" description="Size of the query cache per node" unit="bytes" defaultrate="purepath" />
+      <metric name="FieldDataSize" description="Size of the field data per node" unit="bytes" defaultrate="purepath" />
+      <metric name="FieldDataEvictions" description="How often field data was evicted from the field data cache" unit="number" defaultrate="purepath" />
+      <metric name="PercolateSize" description="Size used for percolation per node" unit="bytes" defaultrate="purepath" />
+      <metric name="TranslogSize" description="Size of the translog per node" unit="bytes" defaultrate="purepath" />
+      <metric name="RequestCacheSize" description="Size of the request cache" unit="bytes" defaultrate="purepath" />
+      <metric name="RecoveryThrottleTime" description="Time that recovery was throttled per node" calculatedelta="true" unit="ms" defaultrate="purepath" />
+      <metric name="RecoveryAsSource" description="Number of shards that are recovered from this node" unit="number" defaultrate="purepath" />
+      <metric name="RecoveryAsTarget" description="Number of shards that are recovered to this node" unit="number" defaultrate="purepath" />
+      <metric name="CompletionSize" description="Size of completion caches" unit="bytes" defaultrate="purepath" />
+      <metric name="SegmentCount" description="Number of segments" unit="number" defaultrate="purepath" />
+      <metric name="SegmentSize" description="Size of segments, split by different segment-measures" unit="bytes" defaultrate="purepath" />
+      <metric name="FileDescriptorCount" description="File descriptor metrics split by different file descriptor measures" unit="number" defaultrate="purepath" />
+      <metric name="FileSystemSize" description="File system metrics split by different file system measures" unit="bytes" defaultrate="purepath" />
+      <metric name="PercolateCount" description="Percolate metrics split by different percolate measures" unit="number" defaultrate="purepath" />
+    </metricgroup>
+    <information>
+      <description value="Provides metrics from the configured Elasticsearch Cluster" />
+    </information>
+  </extension>
+</plugin>
+

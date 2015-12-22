@@ -1,0 +1,244 @@
+apply plugin: 'java'
+//apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+apply plugin: 'jacoco'
+//apply plugin: 'idea'
+
+// TODO: we could use the osgi-plugin of Gradle to do some of the things that we do manually here for now!
+
+sourceCompatibility = 1.7
+
+// ----- PATH SETTINGS -----
+sourceSets.main.java.srcDirs = ['src']
+sourceSets.main.resources.srcDirs = ['resources']
+sourceSets.test.java.srcDirs = ['testsrc']
+sourceSets.test.resources.srcDirs = ['testresources']
+
+ext {
+	if (!project.hasProperty("dynaTraceVersion")) {
+	    dynaTraceVersion = '0.0.0.0000'
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+configurations {
+	// exclude as many things as possible which are not needed here 
+	// as they would bloat the resulting bundle unnecessarily
+	// 
+	all*.exclude group: 'org.jboss.netty'
+	all*.exclude group: 'org.seleniumhq.selenium'
+	all*.exclude group: 'net.java.dev.jna'
+	all*.exclude group: 'com.atlassian.jira'
+	all*.exclude group: 'struts'
+	all*.exclude group: 'org.apache.struts'
+	all*.exclude group: 'javax.mail'
+	all*.exclude group: 'dumbster'
+	all*.exclude group: 'org.swift.common'
+	all*.exclude group: 'net.jpountz.lz4'
+	all*.exclude group: 'com.netflix.hystrix'
+	all*.exclude group: 'com.datastax.cassandra'
+	all*.exclude group: 'de.sciss'
+	all*.exclude group: 'org.apache.axis'
+	all*.exclude group: 'axis'
+	all*.exclude group: 'org.apache.velocity'
+	all*.exclude group: 'velocity'
+	all*.exclude group: 'org.xerial.snappy'
+	all*.exclude group: 'javax.servlet'
+	all*.exclude group: 'commons-fileupload'
+	all*.exclude group: 'com.sumologic.api.client'
+
+	// required when we run tests
+	//all*.exclude group: 'org.eclipse.jetty'
+	//all*.exclude group: 'xerces'
+	//all*.exclude group: 'xalan'
+	
+	// not used in our code and clashes with the one in GWT
+	all*.exclude group: 'log4j' 
+}
+
+dependencies {
+	compile 'commons-io:commons-io:2.4'
+	compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.google.guava:guava:18.0'
+	compile 'org.apache.httpcomponents:httpclient:4.5.1'
+	compile 'com.fasterxml.jackson.core:jackson-core:2.6.3'
+	compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
+
+	compile fileTree(dir: "lib", include: [
+			'com.dynatrace.diagnostics.sdk.jar',
+			'com.dynatrace.diagnostics.util.jar',
+    ])
+
+	testCompile fileTree(dir: "lib", include: [
+			'org.eclipse.osgi_*.jar',
+    ])
+
+    testCompile 'junit:junit:4.+'
+    testCompile 'org.hamcrest:hamcrest-core:1.3'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile 'org.easymock:easymock:3.3.1'
+    testCompile 'org.elasticsearch:elasticsearch:2.1.0'
+	testCompile 'org.elasticsearch:elasticsearch:2.1.0:tests'
+    testCompile 'org.apache.lucene:lucene-test-framework:5.3.1'
+}
+
+eclipse {
+	project {
+		buildCommand 'org.eclipse.pde.ManifestBuilder'
+		buildCommand 'org.eclipse.pde.SchemaBuilder'
+		natures 'org.eclipse.pde.PluginNature'
+	}
+}
+
+// work around unnecessary timestamp in generated file which always causes dirty files in version control
+// https://issues.gradle.org/browse/GRADLE-2293
+task adjustEclipseSettingsFile << {
+   ant.replaceregexp(match:'^#.*', replace:'', flags:'g', byline:true) {
+      fileset(dir: project.projectDir, includes: '.settings/org.eclipse.jdt.core.prefs')
+   }
+}
+task sortEclipseSettingsFile << {
+   new File(project.projectDir, '.settings/org.eclipse.jdt.core.prefs').with { it.text = it.readLines().findAll { it }.sort().join('\n') }
+   new File(project.projectDir, '.classpath').with { it.text = it.readLines().findAll { it }.unique().join('\n') }
+}
+eclipseJdt.finalizedBy adjustEclipseSettingsFile
+eclipseJdt.finalizedBy sortEclipseSettingsFile
+
+tasks.withType(JavaCompile) {
+	// avoid: :compileJavawarning: [options] bootstrap class path not set in conjunction with -source 1.7
+	options.warnings = false
+	options.compilerArgs = [ '-Xlint:deprecation' ]
+    options.encoding = 'UTF-8'
+}
+
+test {
+    systemProperties = System.properties
+
+    systemProperty 'jsse.enableSNIExtension', 'false'
+
+    // show standard out and standard error of the test JVM(s) on the console
+    //testLogging.showStandardStreams = true
+
+    // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
+    systemProperties['user.dir'] = workingDir
+}
+
+task validateXml {
+	// define inputs and outputs to make the up-to-date check of Gradle work for this task
+	inputs.files fileTree(dir: project.projectDir, includes: ['**/*.xml'], excludes: ['.ant-targets-build.xml'])
+	outputs.files fileTree(dir: project.projectDir, includes: ['**/*.xml'], excludes: ['.ant-targets-build.xml'])
+	
+	doLast {
+		// ensure that all the documents are at least well-formed, i.e. nobody made illegal manual changes
+		ant.xmlvalidate(lenient:true) {
+			fileset(dir: project.projectDir) {
+				include(name: '**/*.xml')
+				exclude(name: '.ant-targets-build.xml')
+			}
+		}
+	}
+}
+jar.dependsOn validateXml    
+//jar.dependsOn check
+
+jar {
+	manifest {
+		from('META-INF/MANIFEST.MF') {
+			// overwrite version in the Manifest
+            eachEntry { details ->
+                if (details.key == 'Bundle-Version' || details.key == 'Implementation-Version') {
+                    details.value = dynaTraceVersion
+                }
+            }
+        }
+	}
+
+	// add the OSGi pieces and the source code
+	from('.') {
+		include 'src/**'
+		include 'compuwareBSD.txt'
+		include 'plugin*.xml'
+		include 'plugin*.properties'
+		include 'META-INF/**'
+	}
+
+	// add all compile dependencies
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/**'
+        exclude 'OSGI-INF/**'
+        exclude 'lib/**'
+    	exclude '*.properties'
+    	exclude '*.xml'
+    	exclude '*.html'
+    	exclude '*.png'
+    	exclude '*.gif'
+    	exclude '*.xcf'
+    	exclude '*.jks'
+    	exclude '*.css'
+    	exclude '*.js'
+    	exclude '*.ico'
+    	exclude 'css/**'
+    	exclude 'font-awesome/**'
+    	exclude 'js/**'
+    	exclude 'com/dynatrace/diagnostics/**'
+		exclude 'org/eclipse/osgi/**'
+		exclude 'org/osgi/**'
+    	exclude 'icons/**'
+        exclude 'prefuse/**'
+        exclude 'dashboards/**'
+        exclude 'profiles/**'
+        exclude 'fonts/**'
+        exclude 'schema/**'
+        exclude 'velocity/**'
+        exclude 'img/**'
+        exclude 'buttons/**'
+        exclude 'sb-admin-v2/**'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.8'
+}
+
+jacoco {
+    toolVersion = '0.7.5.201505241946'
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+	}
+}
+
+configurations {
+    junitAnt
+}
+
+dependencies {
+    junitAnt 'junit:junit:4.+'
+    junitAnt('org.apache.ant:ant-junit:1.9.3') {
+        transitive = false
+    }
+    junitAnt('org.apache.ant:ant-junit4:1.9.3') {
+        transitive = false
+     }
+}
+ant.taskdef(name: 'junit', classname: 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTask',
+             classpath: configurations.junitAnt.asPath)
+
+task plugin(dependsOn: jar) {
+	description = 'Prepares the .dtp file by copying files in place'
+
+	println "Building plugin with version " + dynaTraceVersion
+
+	doLast {
+		ant.copy(todir: 'plugin/plugin', file:'build/libs/Dynatrace-Elasticsearch-Plugin.jar', verbose:true)
+		ant.replaceregexp(file:'plugin/META-INF/MANIFEST.MF', match:'Bundle-Version: \\d+.\\d+.\\d+.\\d+', replace:'Bundle-Version: ' + dynaTraceVersion)
+		ant.ant(antfile:'plugin/build.xml', inheritAll:'false') {
+			property(name:'version',value:dynaTraceVersion)
+		}
+	}
+}

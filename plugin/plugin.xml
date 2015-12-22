@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+		 id="com.dynatrace.diagnostics.ruxit.elasticsearch.plugin"
+         point="com.dynatrace.diagnostics.InstallerContent">
+      <metainfo
+            installer_type="resourcepack"
+            name="Elasticsearch Plugin">
+		 
+		 <resource
+               resource="dashboards/Elasticsearch.dashboard.xml"
+               resource_type="dashboard"
+			   overwrite="false">
+         </resource>
+		 
+         <resource
+               resource="profiles/Elasticsearch.profile.xml"
+               resource_type="systemProfile"
+			   overwrite="false">
+         </resource>
+
+         <resource
+               resource="plugin/Dynatrace-Elasticsearch-Plugin.jar"
+               resource_type="userPlugin">
+         </resource>
+      </metainfo>
+   </extension>
+</plugin>
