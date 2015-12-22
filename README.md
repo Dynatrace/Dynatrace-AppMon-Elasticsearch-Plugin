@@ -16,7 +16,7 @@ Download the .dtp file and install it on the Dynatrace Server
 
 ### Configure the Elasticsearch Monitor
 
-Configure a scheduled task for the Elasticsearch Monitor and define the hostname/port of the Elasticsearch REST interface.
+Configure the provided scheduled task for the Elasticsearch Monitor and define the hostname/port of the Elasticsearch REST interface. The default port number is 9200 unless it was changed in the Elasticsearch configuration.
 
 ### System profile/Dashboards
 
