@@ -18,6 +18,10 @@ Download the .dtp file and install it on the Dynatrace Server
 
 Configure the provided scheduled task for the Elasticsearch Monitor and define the hostname/port of the Elasticsearch REST interface. The default port number is 9200 unless it was changed in the Elasticsearch configuration.
 
+### Optional: Inject Agents in Elasticsearch Nodes
+
+If you want additional metrics like CPU usages, JVM memory and other host/process level metrics you can inject the Dynatrace Agent and use the provided Agent Mapping "Elasticsearch", then some of the process/host-level Dashlets in the Dashboard will show additional information.
+
 ### System profile/Dashboards
 
 The plugin also includes a system profile 'Elasticsearch' and a Dashboard 'Elasticsearch' with some sample Dashlets.
