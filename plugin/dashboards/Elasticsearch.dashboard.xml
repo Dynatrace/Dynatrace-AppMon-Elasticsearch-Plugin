@@ -3,7 +3,7 @@
 <!-- Manual changes can cause severe problems and system instability -->
 <!-- Apply manual changes only if you have received explicit instructions from dynaTrace Support -->
 <dynatrace version="6.2.3.1048" date="12/22/15 12:39 PM">
-  <dashboardconfig memento.version="6.2.3.1048" icon="com.dynatrace.diagnostics.sdk/default_16x16.png" localizationenabled="false" sessiontype="live" locationassource="true" suppresssavewarning="false" groupname="" authorname="Dynatrace" opendrilldowninnewdashboard="true" sessionid="Elasticsearch" autoreplacesession="false" modified="2015-12-22T12:39:26+0100" id="413ac851-6ef3-4e7b-b24d-78f3270e0fe2" revision="00000151-c97c-a110-a8d9-4d8d96e3079e" created="2015-12-15T11:58:17+0100" description="" name="Elasticsearch" modifiedbyname="admin" locationascomparesource="false">
+  <dashboardconfig memento.version="6.2.3.1048" icon="com.dynatrace.diagnostics.sdk/default_16x16.png" localizationenabled="false" sessiontype="live" locationassource="true" suppresssavewarning="false" groupname="" authorname="Dynatrace" opendrilldowninnewdashboard="true" sessionid="Elasticsearch" autoreplacesession="false" modified="2015-12-22T12:39:26+0100" id="413ac851-6ef3-4e7b-b24d-78f3270e0fe2" revision="00000151-c97c-a110-a8d9-4d8d96e3079e" created="2015-12-15T11:58:17+0100" description="" name="Elasticsearch" modifiedbyname="Dynatrace" locationascomparesource="false">
     <reportconfig lines.per.table="100" pagesize="A4" enabled="true" print.legends="true" orientation="portrait" formathtml="com.dynatrace.diagnostics.report.velocity.format.htmlrenderer" optimizeequalcolumns="true" type="HTML" title="" override="false" levels.per.tree="10" description="" formatpdf="com.dynatrace.diagnostics.report.velocity.format.pdfrenderer" print.images="true" />
     <filter>
       <criterion type="admfilteranalyzer" />
@@ -552,7 +552,7 @@
             <tagtolabel>
               <taglabelentry value="Node" key="Node" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="IndexingThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="IndexingThrottleTime" measuretype="MonitorMeasure" metrickeyid="IndexingThrottleTime" agentname="-" metricsimpledisplayname="IndexingThrottleTime">
+            <lightweightuniquemeasureidentifier keyid="IndexingThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="IndexingThrottleTime" measuretype="MonitorMeasure" metrickeyid="IndexingThrottleTime" agentname="-" metricsimpledisplayname="IndexingThrottleTime">
               <tag value="Tri-Man" type="0" key="Node" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="ms" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -577,7 +577,7 @@
             <tagtolabel>
               <taglabelentry value="Node" key="Node" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="IndexingThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="IndexingThrottleTime" measuretype="MonitorMeasure" metrickeyid="IndexingThrottleTime" agentname="-" metricsimpledisplayname="IndexingThrottleTime" />
+            <lightweightuniquemeasureidentifier keyid="IndexingThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="IndexingThrottleTime" measuretype="MonitorMeasure" metrickeyid="IndexingThrottleTime" agentname="-" metricsimpledisplayname="IndexingThrottleTime" />
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="ms" monitorscheduleid="Elasticsearch" measurerate="purepath" />
           </chartsource>
           <chartsource position="-1" scale="0" visible="true" sessiontype="live" parentid="944ce149-4e66-4c96-a50e-d78b3d915e48" aggregationtype="Max" uiunit="s" groupingvalue="" id="e544d381-4c84-3e20-b74a-ae62171a245b" fetchmeasurecolor="false" overridesource="true" rate="10s" ratesupported="false" name="IndexingThrottleTime" sourcecolor="RGB(242,134,10,255)" sourcetype="MEASURE" fetchbaseline="false" dynamicconfig="true" autounit="false" sessionid="Elasticsearch" groupingcriterion="Node" displayrate="10s" unit="s" systemid="Elasticsearch" measuretype="MonitorMeasure" fetch.dynamic.measures="true" fetchthreshold="false" autoscale="false">
@@ -602,7 +602,7 @@
             <tagtolabel>
               <taglabelentry value="Node" key="Node" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="StoreThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="StoreThrottleTime" measuretype="MonitorMeasure" metrickeyid="StoreThrottleTime" agentname="-" metricsimpledisplayname="StoreThrottleTime">
+            <lightweightuniquemeasureidentifier keyid="StoreThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="StoreThrottleTime" measuretype="MonitorMeasure" metrickeyid="StoreThrottleTime" agentname="-" metricsimpledisplayname="StoreThrottleTime">
               <tag value="Tri-Man" type="0" key="Node" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="ms" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -629,7 +629,7 @@
             <tagtolabel>
               <taglabelentry value="Node" key="Node" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="RecoveryThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="RecoveryThrottleTime" measuretype="MonitorMeasure" metrickeyid="RecoveryThrottleTime" agentname="-" metricsimpledisplayname="RecoveryThrottleTime">
+            <lightweightuniquemeasureidentifier keyid="RecoveryThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="RecoveryThrottleTime" measuretype="MonitorMeasure" metrickeyid="RecoveryThrottleTime" agentname="-" metricsimpledisplayname="RecoveryThrottleTime">
               <tag value="Tri-Man" type="0" key="Node" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="ms" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -638,14 +638,14 @@
             <tagtolabel>
               <taglabelentry value="Node" key="Node" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="RecoveryThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="RecoveryThrottleTime" measuretype="MonitorMeasure" metrickeyid="RecoveryThrottleTime" agentname="-" metricsimpledisplayname="RecoveryThrottleTime" />
+            <lightweightuniquemeasureidentifier keyid="RecoveryThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="RecoveryThrottleTime" measuretype="MonitorMeasure" metrickeyid="RecoveryThrottleTime" agentname="-" metricsimpledisplayname="RecoveryThrottleTime" />
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="ms" monitorscheduleid="Elasticsearch" measurerate="purepath" />
           </chartsource>
           <chartsource position="-1" scale="0" visible="true" sessiontype="live" parentid="8cf6d286-7803-4475-ae14-b032930c16ae" aggregationtype="Max" uiunit="s" groupingvalue="" id="38fd7fe7-2577-366a-b135-576d2903418c" fetchmeasurecolor="false" overridesource="true" rate="10s" ratesupported="false" name="StoreThrottleTime" sourcecolor="RGB(177,78,207,255)" sourcetype="MEASURE" fetchbaseline="false" dynamicconfig="true" autounit="false" sessionid="Elasticsearch" groupingcriterion="Node" displayrate="10s" unit="s" systemid="Elasticsearch" measuretype="MonitorMeasure" fetch.dynamic.measures="true" fetchthreshold="false" autoscale="false">
             <tagtolabel>
               <taglabelentry value="Node" key="Node" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="StoreThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="StoreThrottleTime" measuretype="MonitorMeasure" metrickeyid="StoreThrottleTime" agentname="-" metricsimpledisplayname="StoreThrottleTime" />
+            <lightweightuniquemeasureidentifier keyid="StoreThrottleTime" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="StoreThrottleTime" measuretype="MonitorMeasure" metrickeyid="StoreThrottleTime" agentname="-" metricsimpledisplayname="StoreThrottleTime" />
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="ms" monitorscheduleid="Elasticsearch" measurerate="purepath" />
           </chartsource>
           <chartsource position="-1" scale="0" visible="true" sessiontype="live" parentid="caa3b534-6912-472d-b88a-44c3d45b7c49" aggregationtype="Max" uiunit="s" groupingvalue="" id="3afac339-3e53-3f61-a4a6-7f80fc89f69d" fetchmeasurecolor="false" overridesource="true" rate="10s" ratesupported="false" name="RecoveryThrottleTime" sourcecolor="RGB(186,42,32,255)" sourcetype="MEASURE" fetchbaseline="false" dynamicconfig="true" autounit="false" sessionid="Elasticsearch" groupingcriterion="Node" displayrate="10s" unit="s" systemid="Elasticsearch" measuretype="MonitorMeasure" fetch.dynamic.measures="true" fetchthreshold="false" autoscale="false">
@@ -904,7 +904,7 @@
             <displaysourceinfo monitorhost="acceptancee2e-monitoring.ckn5zjcs4nmp.us-east-1.rds.amazonaws.com" monitordetails="Elasticsearch" measureunit="number" monitorscheduleid="Elasticsearch" measurerate="purepath" />
           </chartsource>
           <chartsource position="-1" scale="0" visible="false" sessiontype="live" parentid="495dfc90-6967-4437-b5b5-49fe66457556" aggregationtype="Max" uiunit="number" groupingvalue="" id="36e7c1e4-745c-3810-ac71-e07e415600c0" fetchmeasurecolor="false" overridesource="false" rate="10s" ratesupported="true" name="DataNodeCount" sourcecolor="RGB(89,78,13,255)" sourcetype="MEASURE" fetchbaseline="false" dynamicconfig="true" autounit="false" sessionid="Elasticsearch" groupingcriterion="AgentOrMonitor" displayrate="10s" unit="number" systemid="Elasticsearch" measuretype="MonitorMeasure" fetch.dynamic.measures="true" fetchthreshold="false" autoscale="false">
-            <lightweightuniquemeasureidentifier keyid="DataNodeCount" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="loalhost" parentkeyid="DataNodeCount" measuretype="MonitorMeasure" metrickeyid="DataNodeCount" agentname="Elasticsearch" metricsimpledisplayname="DataNodeCount" />
+            <lightweightuniquemeasureidentifier keyid="DataNodeCount" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="DataNodeCount" measuretype="MonitorMeasure" metrickeyid="DataNodeCount" agentname="Elasticsearch" metricsimpledisplayname="DataNodeCount" />
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="number" monitorscheduleid="Elasticsearch" measurerate="purepath" />
           </chartsource>
           <chartsource position="-1" scale="0" visible="false" sessiontype="live" parentid="495dfc90-6967-4437-b5b5-49fe66457556" aggregationtype="Max" uiunit="number" groupingvalue="" id="3863684c-e46e-3d90-aa12-e1258279457b" fetchmeasurecolor="false" overridesource="true" rate="10s" ratesupported="true" name="DataNodeCount" sourcecolor="RGB(77,158,229,255)" sourcetype="MEASURE" fetchbaseline="false" dynamicconfig="true" autounit="false" sessionid="Elasticsearch" groupingcriterion="AgentOrMonitor" displayrate="10s" unit="number" systemid="Elasticsearch" measuretype="MonitorMeasure" fetch.dynamic.measures="true" fetchthreshold="false" autoscale="false">
@@ -1901,7 +1901,7 @@
             <tagtolabel>
               <taglabelentry value="State" key="State" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
+            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
               <tag value="memory_in_bytes" type="0" key="State" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="bytes" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -1910,7 +1910,7 @@
             <tagtolabel>
               <taglabelentry value="State" key="State" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
+            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
               <tag value="version_map_memory_in_bytes" type="0" key="State" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="bytes" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -1933,7 +1933,7 @@
             <tagtolabel>
               <taglabelentry value="State" key="State" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
+            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
               <tag value="index_writer_max_memory_in_bytes" type="0" key="State" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="bytes" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -1970,7 +1970,7 @@
             <tagtolabel>
               <taglabelentry value="State" key="State" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
+            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
               <tag value="stored_fields_memory_in_bytes" type="0" key="State" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="bytes" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -1993,7 +1993,7 @@
             <tagtolabel>
               <taglabelentry value="State" key="State" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
+            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
               <tag value="index_writer_memory_in_bytes" type="0" key="State" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="bytes" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -2002,7 +2002,7 @@
             <tagtolabel>
               <taglabelentry value="State" key="State" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
+            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
               <tag value="terms_memory_in_bytes" type="0" key="State" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="bytes" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -2011,7 +2011,7 @@
             <tagtolabel>
               <taglabelentry value="State" key="State" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
+            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
               <tag value="norms_memory_in_bytes" type="0" key="State" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="bytes" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -2027,7 +2027,7 @@
             <tagtolabel>
               <taglabelentry value="State" key="State" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
+            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
               <tag value="fixed_bit_set_memory_in_bytes" type="0" key="State" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="bytes" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -2043,7 +2043,7 @@
             <tagtolabel>
               <taglabelentry value="State" key="State" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
+            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
               <tag value="term_vectors_memory_in_bytes" type="0" key="State" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="bytes" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -2052,7 +2052,7 @@
             <tagtolabel>
               <taglabelentry value="State" key="State" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
+            <lightweightuniquemeasureidentifier keyid="SegmentSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="SegmentSize" measuretype="MonitorMeasure" metrickeyid="SegmentSize" agentname="-" metricsimpledisplayname="SegmentSize">
               <tag value="doc_values_memory_in_bytes" type="0" key="State" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="bytes" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -2189,7 +2189,7 @@
             <tagtolabel>
               <taglabelentry value="Stat" key="Stat" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="FileSystemSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="FileSystemSize" measuretype="MonitorMeasure" metrickeyid="FileSystemSize" agentname="-" metricsimpledisplayname="FileSystemSize">
+            <lightweightuniquemeasureidentifier keyid="FileSystemSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="FileSystemSize" measuretype="MonitorMeasure" metrickeyid="FileSystemSize" agentname="-" metricsimpledisplayname="FileSystemSize">
               <tag value="total_in_bytes" type="0" key="Stat" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="number" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -2198,7 +2198,7 @@
             <tagtolabel>
               <taglabelentry value="Stat" key="Stat" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="FileSystemSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="FileSystemSize" measuretype="MonitorMeasure" metrickeyid="FileSystemSize" agentname="-" metricsimpledisplayname="FileSystemSize">
+            <lightweightuniquemeasureidentifier keyid="FileSystemSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="FileSystemSize" measuretype="MonitorMeasure" metrickeyid="FileSystemSize" agentname="-" metricsimpledisplayname="FileSystemSize">
               <tag value="free_in_bytes" type="0" key="Stat" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="number" monitorscheduleid="Elasticsearch" measurerate="purepath" />
@@ -2214,7 +2214,7 @@
             <tagtolabel>
               <taglabelentry value="Stat" key="Stat" />
             </tagtolabel>
-            <lightweightuniquemeasureidentifier keyid="FileSystemSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="-" parentkeyid="FileSystemSize" measuretype="MonitorMeasure" metrickeyid="FileSystemSize" agentname="-" metricsimpledisplayname="FileSystemSize">
+            <lightweightuniquemeasureidentifier keyid="FileSystemSize" metricgroupkey="Elasticsearch Monitor" collector="" systemid="Elasticsearch" application="" agenthost="localhost" parentkeyid="FileSystemSize" measuretype="MonitorMeasure" metrickeyid="FileSystemSize" agentname="-" metricsimpledisplayname="FileSystemSize">
               <tag value="available_in_bytes" type="0" key="Stat" />
             </lightweightuniquemeasureidentifier>
             <displaysourceinfo monitorhost="loalhost" monitordetails="Elasticsearch" measureunit="number" monitorscheduleid="Elasticsearch" measurerate="purepath" />
