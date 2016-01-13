@@ -6,6 +6,8 @@ The Dynatrace FastPack for Elasticsearch provides a plugin for Dynatrace which c
 
 Find further information in the [dynaTrace community](https://community.compuwareapm.com/community/display/DL/Elasticsearch+FastPack). 
 
+[![Build Status](https://travis-ci.org/dynaTrace/Dynatrace-Elasticsearch-Plugin.svg)](https://travis-ci.org/dynaTrace/Dynatrace-Elasticsearch-Plugin) [![Gradle Status](https://gradleupdate.appspot.com/dynaTrace/Dynatrace-Elasticsearch-Plugin/status.svg?branch=master)](https://gradleupdate.appspot.com/dynaTrace/Dynatrace-Elasticsearch-Plugin/status)
+
 # Additional information
 
 ## Getting started
