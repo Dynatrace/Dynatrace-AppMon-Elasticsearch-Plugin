@@ -380,10 +380,10 @@ public class ElasticsearchMonitor implements Monitor {
 			long docCount = Long.parseLong(items[5]);
 			long delCount = Long.parseLong(items[6]);
 
-			documentCount.addValue(docCount);
+			documentCount.addValueLong(docCount);
 			documentCount.addDynamicMeasure(name, docCount);
 
-			deletedCount.addValue(delCount);
+			deletedCount.addValueLong(delCount);
 			deletedCount.addDynamicMeasure(name, delCount);
 		}
 	}*/
@@ -399,93 +399,98 @@ public class ElasticsearchMonitor implements Monitor {
 
 		JsonNode index = clusterStats.get("indices");
 
-		indexCount.setValue(index.get("count").asDouble());
+		setValue(indexCount, index, "count");
 
 		JsonNode shards = index.get("shards");
-		shardsPerState.setValue(shards.get("total").asDouble());
-		shardsPerState.addDynamicMeasure("primary", shards.get("primaries").asDouble());
-		shardsPerState.addDynamicMeasure("replicationFactor", shards.get("replication").asDouble());
+		if(shards != null) {
+			setValue(shardsPerState, shards, "total");
+			addDynamicMeasure(shardsPerState, "primary", shards, "primaries");
+			addDynamicMeasure(shardsPerState, "replicationFactor", shards, "replication");
+		}
 
 		JsonNode docs = index.get("docs");
-		documentCount.setValue(docs.get("count").asDouble());
-		deletedCount.setValue(docs.get("deleted").asDouble());
+		if(docs != null) {
+			setValue(documentCount, docs, "count");
+			setValue(deletedCount, docs, "deleted");
+		}
 
 		/*JsonNode store = index.get("store");
-		storeSize.setValue(store.get("size_in_bytes").asDouble());
-		storeThrottleTime.setValue(store.get("throttle_time_in_millis").asDouble());*/
+		setValue(storeSize, store, "size_in_bytes");
+		setValue(storeThrottleTime, store, "throttle_time_in_millis");*/
 
 		JsonNode fielddata = index.get("fielddata");
-		fieldDataSize.setValue(fielddata.get("memory_size_in_bytes").asDouble());
-		fieldDataEvictions.setValue(fielddata.get("evictions").asDouble());
+		if(fielddata != null) {
+			setValue(fieldDataSize, fielddata, "memory_size_in_bytes");
+			setValue(fieldDataEvictions, fielddata, "evictions");
+		}
 
 		JsonNode query_cache = index.get("query_cache");
-		queryCachePerState.setValue(query_cache.get("memory_size_in_bytes").asDouble());
-		addDynamicMeasure(queryCachePerState, query_cache, "total_count");
-		addDynamicMeasure(queryCachePerState, query_cache, "hit_count");
-		addDynamicMeasure(queryCachePerState, query_cache, "miss_count");
-		addDynamicMeasure(queryCachePerState, query_cache, "cache_size");
-		addDynamicMeasure(queryCachePerState, query_cache, "cache_count");
-		addDynamicMeasure(queryCachePerState, query_cache, "evictions");
+		if(query_cache != null) {
+			setValue(queryCachePerState, query_cache, "memory_size_in_bytes");
+			addDynamicMeasure(queryCachePerState, query_cache, "total_count");
+			addDynamicMeasure(queryCachePerState, query_cache, "hit_count");
+			addDynamicMeasure(queryCachePerState, query_cache, "miss_count");
+			addDynamicMeasure(queryCachePerState, query_cache, "cache_size");
+			addDynamicMeasure(queryCachePerState, query_cache, "cache_count");
+			addDynamicMeasure(queryCachePerState, query_cache, "evictions");
+		}
 
 		JsonNode completion = index.get("completion");
-		completionSize.setValue(completion.get("size_in_bytes").asDouble());
+		if(completion != null) {
+			setValue(completionSize, completion, "size_in_bytes");
+		}
 
 		JsonNode segments = index.get("segments");
-		segmentCount.setValue(segments.get("count").asDouble());
+		if(segments != null) {
+			setValue(segmentCount, segments, "count");
 
-		addDynamicMeasure(segmentSizePerState, segments, "count");
-		addDynamicMeasure(segmentSizePerState, segments, "memory_in_bytes");
-		addDynamicMeasure(segmentSizePerState, segments, "terms_memory_in_bytes");
-		addDynamicMeasure(segmentSizePerState, segments, "stored_fields_memory_in_bytes");
-		addDynamicMeasure(segmentSizePerState, segments, "term_vectors_memory_in_bytes");
-		addDynamicMeasure(segmentSizePerState, segments, "norms_memory_in_bytes");
-		addDynamicMeasure(segmentSizePerState, segments, "doc_values_memory_in_bytes");
-		addDynamicMeasure(segmentSizePerState, segments, "index_writer_memory_in_bytes");
-		addDynamicMeasure(segmentSizePerState, segments, "index_writer_max_memory_in_bytes");
-		addDynamicMeasure(segmentSizePerState, segments, "version_map_memory_in_bytes");
-		addDynamicMeasure(segmentSizePerState, segments, "fixed_bit_set_memory_in_bytes");
+			addDynamicMeasure(segmentSizePerState, segments, "count");
+			addDynamicMeasure(segmentSizePerState, segments, "memory_in_bytes");
+			addDynamicMeasure(segmentSizePerState, segments, "terms_memory_in_bytes");
+			addDynamicMeasure(segmentSizePerState, segments, "stored_fields_memory_in_bytes");
+			addDynamicMeasure(segmentSizePerState, segments, "term_vectors_memory_in_bytes");
+			addDynamicMeasure(segmentSizePerState, segments, "norms_memory_in_bytes");
+			addDynamicMeasure(segmentSizePerState, segments, "doc_values_memory_in_bytes");
+			addDynamicMeasure(segmentSizePerState, segments, "index_writer_memory_in_bytes");
+			addDynamicMeasure(segmentSizePerState, segments, "index_writer_max_memory_in_bytes");
+			addDynamicMeasure(segmentSizePerState, segments, "version_map_memory_in_bytes");
+			addDynamicMeasure(segmentSizePerState, segments, "fixed_bit_set_memory_in_bytes");
+		}
 
 		JsonNode percolate = index.get("percolate");
-		percolatePerState.setValue(percolate.get("current").asDouble());
-		addDynamicMeasure(percolatePerState, percolate, "total");
-		addDynamicMeasure(percolatePerState, percolate, "time_in_millis");
-		addDynamicMeasure(percolatePerState, percolate, "current");
-		addDynamicMeasure(percolatePerState, percolate, "memory_size_in_bytes");
-		// not a double: addDynamicMeasure(percolatePerState, percolate, "memory_size");
-		addDynamicMeasure(percolatePerState, percolate, "queries");
-
+		if(percolate != null) {
+			setValue(percolatePerState, percolate, "current");
+			addDynamicMeasure(percolatePerState, percolate, "total");
+			addDynamicMeasure(percolatePerState, percolate, "time_in_millis");
+			addDynamicMeasure(percolatePerState, percolate, "current");
+			addDynamicMeasure(percolatePerState, percolate, "memory_size_in_bytes");
+			// not a double: addDynamicMeasure(percolatePerState, percolate, "memory_size");
+			addDynamicMeasure(percolatePerState, percolate, "queries");
+		}
 
 		JsonNode nodes = clusterStats.get("nodes");
-
-		JsonNode process = nodes.get("process");
-
-		JsonNode fileDesc = process.get("open_file_descriptors");
-		fileDescPerStat.setValue(fileDesc.get("max").asDouble());
-		addDynamicMeasure(fileDescPerStat, fileDesc, "min");
-		addDynamicMeasure(fileDescPerStat, fileDesc, "max");
-		addDynamicMeasure(fileDescPerStat, fileDesc, "avg");
-
-		JsonNode fs = nodes.get("fs");
-		// this was missing in tests sometimes
-		if(fs != null) {
-			JsonNode free = fs.get("free_in_bytes");
-			if(free != null) {
-				fileSystemPerStat.setValue(free.asDouble());
+		if(nodes != null) {
+			JsonNode process = nodes.get("process");
+			if(process != null) {
+				JsonNode fileDesc = process.get("open_file_descriptors");
+				setValue(fileDescPerStat, fileDesc, "max");
+				addDynamicMeasure(fileDescPerStat, fileDesc, "min");
+				addDynamicMeasure(fileDescPerStat, fileDesc, "max");
+				addDynamicMeasure(fileDescPerStat, fileDesc, "avg");
 			}
-			addDynamicMeasure(fileSystemPerStat, fs, "total_in_bytes");
-			addDynamicMeasure(fileSystemPerStat, fs, "free_in_bytes");
-			addDynamicMeasure(fileSystemPerStat, fs, "available_in_bytes");
+
+			JsonNode fs = nodes.get("fs");
+			// this was missing in tests sometimes
+			if (fs != null) {
+                setValue(fileSystemPerStat, fs, "free_in_bytes");
+				addDynamicMeasure(fileSystemPerStat, fs, "total_in_bytes");
+				addDynamicMeasure(fileSystemPerStat, fs, "free_in_bytes");
+				addDynamicMeasure(fileSystemPerStat, fs, "available_in_bytes");
+			}
 		}
 	}
 
-	private void addDynamicMeasure(Measure measure, JsonNode jsonNode, String jsonMeasure) {
-		JsonNode value = jsonNode.get(jsonMeasure);
-		if(value != null) {
-			measure.addDynamicMeasure(jsonMeasure, value.asDouble());
-		}
-	}
-
-	private Map<String,String> retrieveNodeHealth(CloseableHttpClient client, Measure initHeap, Measure maxHeap,
+    private Map<String,String> retrieveNodeHealth(CloseableHttpClient client, Measure initHeap, Measure maxHeap,
 			Measure initNonHeap, Measure maxNonHeap, Measure maxDirect) throws IOException {
 		Map<String,String> nodeIdToName = new HashMap<>();
 
@@ -500,26 +505,26 @@ public class ElasticsearchMonitor implements Monitor {
 
 			JsonNode mem = node.getValue().get("jvm").get("mem");
 
-			initHeap.addValue(mem.get("heap_init_in_bytes").asLong());
-			initHeap.addDynamicMeasure(nodeName, mem.get("heap_init_in_bytes").asLong());
+			addValueLong(initHeap, mem, "heap_init_in_bytes");
+			addDynamicMeasureLong(initHeap, nodeName, mem, "heap_init_in_bytes");
 
-			maxHeap.addValue(mem.get("heap_max_in_bytes").asLong());
-			maxHeap.addDynamicMeasure(nodeName, mem.get("heap_max_in_bytes").asLong());
+			addValueLong(maxHeap, mem, "heap_max_in_bytes");
+			addDynamicMeasureLong(maxHeap, nodeName, mem, "heap_max_in_bytes");
 
-			initNonHeap.addValue(mem.get("non_heap_init_in_bytes").asLong());
-			initNonHeap.addDynamicMeasure(nodeName, mem.get("non_heap_init_in_bytes").asLong());
+			addValueLong(initNonHeap, mem, "non_heap_init_in_bytes");
+			addDynamicMeasureLong(initNonHeap, nodeName, mem, "non_heap_init_in_bytes");
 
-			maxNonHeap.addValue(mem.get("non_heap_max_in_bytes").asLong());
-			maxNonHeap.addDynamicMeasure(nodeName, mem.get("non_heap_max_in_bytes").asLong());
+			addValueLong(maxNonHeap, mem, "non_heap_max_in_bytes");
+			addDynamicMeasureLong(maxNonHeap, nodeName, mem, "non_heap_max_in_bytes");
 
-			maxDirect.addValue(mem.get("direct_max_in_bytes").asLong());
-			maxDirect.addDynamicMeasure(nodeName, mem.get("direct_max_in_bytes").asLong());
+			addValueLong(maxDirect, mem, "direct_max_in_bytes");
+			addDynamicMeasureLong(maxDirect, nodeName, mem, "direct_max_in_bytes");
 		}
 
 		return nodeIdToName;
 	}
 
-	private void retrieveNodeStats(CloseableHttpClient client, Measure storeSizePerNode, Measure storeThrottleTimePerNode,
+    private void retrieveNodeStats(CloseableHttpClient client, Measure storeSizePerNode, Measure storeThrottleTimePerNode,
 			Measure indexingThrottleTimePerNode, Measure indexingCurrentPerNode, Measure deleteCurrentPerNode,
 			Measure queryCurrentPerNode, Measure fetchCurrentPerNode, Measure scrollCurrentPerNode,
 			Measure queryCacheSizePerNode, Measure fieldDataSizePerNode, Measure percolateSizePerNode,
@@ -535,86 +540,95 @@ public class ElasticsearchMonitor implements Monitor {
 
 			JsonNode store = node.getValue().get("indices").get("store");
 
-			storeSizePerNode.addValue(store.get("size_in_bytes").asLong());
-			storeSizePerNode.addDynamicMeasure(nodeName, store.get("size_in_bytes").asLong());
+			addValueLong(storeSizePerNode, store, "size_in_bytes");
+			addDynamicMeasureLong(storeSizePerNode, nodeName, store, "size_in_bytes");
 
-			storeThrottleTimePerNode.addValue(store.get("throttle_time_in_millis").asLong());
-			storeThrottleTimePerNode.addDynamicMeasure(nodeName, store.get("throttle_time_in_millis").asLong());
+			addValueLong(storeThrottleTimePerNode, store, "throttle_time_in_millis");
+			addDynamicMeasureLong(storeThrottleTimePerNode, nodeName, store, "throttle_time_in_millis");
 
 			JsonNode indexing = node.getValue().get("indices").get("indexing");
 
-			indexingThrottleTimePerNode.addValue(indexing.get("throttle_time_in_millis").asLong());
-			indexingThrottleTimePerNode.addDynamicMeasure(nodeName, indexing.get("throttle_time_in_millis").asLong());
+			addValueLong(indexingThrottleTimePerNode, indexing, "throttle_time_in_millis");
+			addDynamicMeasureLong(indexingThrottleTimePerNode, nodeName, indexing, "throttle_time_in_millis");
 
-			indexingCurrentPerNode.addValue(indexing.get("index_current").asLong());
-			indexingCurrentPerNode.addDynamicMeasure(nodeName, indexing.get("index_current").asLong());
+			addValueLong(indexingCurrentPerNode, indexing, "index_current");
+			addDynamicMeasureLong(indexingCurrentPerNode, nodeName, indexing, "index_current");
 
-			deleteCurrentPerNode.addValue(indexing.get("delete_current").asLong());
-			deleteCurrentPerNode.addDynamicMeasure(nodeName, indexing.get("delete_current").asLong());
+			addValueLong(deleteCurrentPerNode, indexing, "delete_current");
+			addDynamicMeasureLong(deleteCurrentPerNode, nodeName, indexing, "delete_current");
 
 			JsonNode search = node.getValue().get("indices").get("search");
 
-			queryCurrentPerNode.addValue(search.get("query_current").asLong());
-			queryCurrentPerNode.addDynamicMeasure(nodeName, search.get("query_current").asLong());
+			addValueLong(queryCurrentPerNode, search, "query_current");
+			addDynamicMeasureLong(queryCurrentPerNode, nodeName, search, "query_current");
 
-			fetchCurrentPerNode.addValue(search.get("fetch_current").asLong());
-			fetchCurrentPerNode.addDynamicMeasure(nodeName, search.get("fetch_current").asLong());
+			addValueLong(fetchCurrentPerNode, search, "fetch_current");
+			addDynamicMeasureLong(fetchCurrentPerNode, nodeName, search, "fetch_current");
 
-			scrollCurrentPerNode.addValue(search.get("scroll_current").asLong());
-			scrollCurrentPerNode.addDynamicMeasure(nodeName, search.get("scroll_current").asLong());
+            addValueLong(scrollCurrentPerNode, search, "scroll_current");
+            addDynamicMeasureLong(scrollCurrentPerNode, nodeName, search, "scroll_current");
 
 			JsonNode queryCache = node.getValue().get("indices").get("query_cache");
 
-			queryCacheSizePerNode.addValue(queryCache.get("memory_size_in_bytes").asLong());
-			queryCacheSizePerNode.addDynamicMeasure(nodeName, queryCache.get("memory_size_in_bytes").asLong());
+			addValueLong(queryCacheSizePerNode, queryCache, "memory_size_in_bytes");
+			addDynamicMeasureLong(queryCacheSizePerNode, nodeName, queryCache, "memory_size_in_bytes");
 
 			JsonNode fieldData = node.getValue().get("indices").get("fielddata");
 
-			fieldDataSizePerNode.addValue(fieldData.get("memory_size_in_bytes").asLong());
-			fieldDataSizePerNode.addDynamicMeasure(nodeName, fieldData.get("memory_size_in_bytes").asLong());
+			addValueLong(fieldDataSizePerNode, fieldData, "memory_size_in_bytes");
+			addDynamicMeasureLong(fieldDataSizePerNode, nodeName, fieldData, "memory_size_in_bytes");
 
 			JsonNode percolate = node.getValue().get("indices").get("percolate");
 
-			percolateSizePerNode.addValue(percolate.get("memory_size_in_bytes").asLong());
-			percolateSizePerNode.addDynamicMeasure(nodeName, percolate.get("memory_size_in_bytes").asLong());
+			addValueLong(percolateSizePerNode, percolate, "memory_size_in_bytes");
+			addDynamicMeasureLong(percolateSizePerNode, nodeName, percolate, "memory_size_in_bytes");
 
 			JsonNode translog = node.getValue().get("indices").get("translog");
 
-			translogSizePerNode.addValue(translog.get("size_in_bytes").asLong());
-			translogSizePerNode.addDynamicMeasure(nodeName, translog.get("size_in_bytes").asLong());
+			addValueLong(translogSizePerNode, translog, "size_in_bytes");
+			addDynamicMeasureLong(translogSizePerNode, nodeName, translog, "size_in_bytes");
 
 			JsonNode requestCache = node.getValue().get("indices").get("request_cache");
-
-			requestCacheSizePerNode.addValue(requestCache.get("memory_size_in_bytes").asLong());
-			requestCacheSizePerNode.addDynamicMeasure(nodeName, requestCache.get("memory_size_in_bytes").asLong());
+			if(requestCache != null) {
+				addValueLong(requestCacheSizePerNode, requestCache, "memory_size_in_bytes");
+				addDynamicMeasureLong(requestCacheSizePerNode, nodeName, requestCache, "memory_size_in_bytes");
+			}
 
 			JsonNode recovery = node.getValue().get("indices").get("recovery");
 
-			recoveryThrottleTimePerNode.addValue(recovery.get("throttle_time_in_millis").asLong());
-			recoveryThrottleTimePerNode.addDynamicMeasure(nodeName, recovery.get("throttle_time_in_millis").asLong());
+			addValueLong(recoveryThrottleTimePerNode, recovery, "throttle_time_in_millis");
+			addDynamicMeasureLong(recoveryThrottleTimePerNode, nodeName, recovery, "throttle_time_in_millis");
 
-			recoveryAsSourcePerNode.addValue(recovery.get("current_as_source").asLong());
-			recoveryAsSourcePerNode.addDynamicMeasure(nodeName, recovery.get("current_as_source").asLong());
+			addValueLong(recoveryAsSourcePerNode, recovery, "current_as_source");
+			addDynamicMeasureLong(recoveryAsSourcePerNode, nodeName, recovery, "current_as_source");
 
-			recoveryAsTargetPerNode.addValue(recovery.get("current_as_target").asLong());
-			recoveryAsTargetPerNode.addDynamicMeasure(nodeName, recovery.get("current_as_target").asLong());
+			addValueLong(recoveryAsTargetPerNode, recovery, "current_as_target");
+			addDynamicMeasureLong(recoveryAsTargetPerNode, nodeName, recovery, "current_as_target");
 		}
 	}
 
-	private void retrieveClusterHealth(CloseableHttpClient client, Measure nodeCount, Measure dataNodeCount, Measure activePrimaryShards, Measure activeShardsPercent, Measure activeShards,
+    private void retrieveClusterHealth(CloseableHttpClient client, Measure nodeCount, Measure dataNodeCount, Measure activePrimaryShards, Measure activeShardsPercent, Measure activeShards,
 			Measure relocatingShards, Measure initializingShards, Measure unassignedShards, Measure delayedUnassignedShards) throws IOException {
 		String json = simpleGet(client, url + "/_cluster/health");
 		JsonNode clusterHealth = mapper.readTree(json);
 
-		nodeCount.setValue(clusterHealth.get("number_of_nodes").asLong());
-		dataNodeCount.setValue(clusterHealth.get("number_of_data_nodes").asLong());
-		activePrimaryShards.setValue(clusterHealth.get("active_primary_shards").asLong());
-		activeShardsPercent.setValue(clusterHealth.get("active_shards_percent_as_number").asDouble());
-		activeShards.setValue(clusterHealth.get("active_shards").asLong());
-		relocatingShards.setValue(clusterHealth.get("relocating_shards").asLong());
-		initializingShards.setValue(clusterHealth.get("initializing_shards").asLong());
-		unassignedShards.setValue(clusterHealth.get("unassigned_shards").asLong());
-		delayedUnassignedShards.setValue(clusterHealth.get("delayed_unassigned_shards").asLong());
+		setValueLong(nodeCount, clusterHealth, "number_of_nodes");
+		setValueLong(dataNodeCount, clusterHealth, "number_of_data_nodes");
+		setValueLong(activePrimaryShards, clusterHealth, "active_primary_shards");
+		setValue(activeShardsPercent, clusterHealth, "active_shards_percent_as_number");
+		setValueLong(activeShards, clusterHealth, "active_shards");
+		setValueLong(relocatingShards, clusterHealth, "relocating_shards");
+		setValueLong(initializingShards, clusterHealth, "initializing_shards");
+		setValueLong(unassignedShards, clusterHealth, "unassigned_shards");
+		setValueLong(delayedUnassignedShards, clusterHealth, "delayed_unassigned_shards");
+
+		/* Not yet read:
+				"number_of_pending_tasks": 0,
+				"number_of_in_flight_fetch": 0
+
+		// only in 2.0.0 and above:
+				"task_max_waiting_in_queue_millis": 0,
+		*/
 	}
 
 	/*private void retrievePSGInformation(Measure psgCount, Measure psgCountByEnvironment,
@@ -630,29 +644,65 @@ public class ElasticsearchMonitor implements Monitor {
 				continue;
 			}
 
-			psgCount.addValue(1);
+			psgCount.addValueLong(1);
 
-			psgCountByEnvironment.addValue(1);
+			psgCountByEnvironment.addValueLong(1);
 			psgCountByEnvironment.addDynamicMeasure(environment.name(), 1);
 
-			psgCountByOs.addValue(1);
+			psgCountByOs.addValueLong(1);
 			psgCountByOs.addDynamicMeasure(base.get("osInfo"), 1);
 
-			psgCountByVersion.addValue(1);
+			psgCountByVersion.addValueLong(1);
 			psgCountByVersion.addDynamicMeasure(base.get("buildVersion"), 1);
 
-			psgCountByInstallerVersion.addValue(1);
+			psgCountByInstallerVersion.addValueLong(1);
 			psgCountByInstallerVersion.addDynamicMeasure(base.get("productVersion"), 1);
 		}
 	}
 */
 
-	/**
-	 *
-	 * @param env
-	 * @param value
-	 * @param dynamicMeasures
-	 */
+    private void setValue(Measure measure, JsonNode parent, String key) {
+        JsonNode node = parent.get(key);
+        if(node != null) {
+            measure.setValue(node.asDouble());
+        }
+    }
+
+    private void setValueLong(Measure measure, JsonNode parent, String key) {
+        JsonNode node = parent.get(key);
+        if(node != null) {
+            measure.setValue(node.asLong());
+        }
+    }
+
+    private void addValueLong(Measure measure, JsonNode parent, String key) {
+        JsonNode node = parent.get(key);
+        if(node != null) {
+            measure.addValue(node.asLong());
+        }
+    }
+
+    private void addDynamicMeasure(Measure measure, String jsonMeasure, JsonNode jsonNode, String key) {
+        JsonNode value = jsonNode.get(jsonMeasure);
+        if(value != null) {
+            measure.addDynamicMeasure(key, value.asDouble());
+        }
+    }
+
+    private void addDynamicMeasure(Measure measure, JsonNode jsonNode, String jsonMeasure) {
+        JsonNode value = jsonNode.get(jsonMeasure);
+        if(value != null) {
+            measure.addDynamicMeasure(jsonMeasure, value.asDouble());
+        }
+    }
+
+    private void addDynamicMeasureLong(Measure measure, String nodeName, JsonNode jsonNode, String jsonMeasure) {
+        JsonNode value = jsonNode.get(jsonMeasure);
+        if(value != null) {
+            measure.addDynamicMeasure(nodeName, value.asLong());
+        }
+    }
+
 	protected void writeMeasure(String group, String name, MonitorEnvironment env, Measure value) {
 		Collection<MonitorMeasure> measures = env.getMonitorMeasures(group, name);
 		if (measures != null) {
