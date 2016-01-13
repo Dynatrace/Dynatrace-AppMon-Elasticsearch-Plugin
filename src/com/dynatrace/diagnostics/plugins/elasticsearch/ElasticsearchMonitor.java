@@ -595,15 +595,16 @@ public class ElasticsearchMonitor implements Monitor {
 			}
 
 			JsonNode recovery = node.getValue().get("indices").get("recovery");
+            if(recovery != null) {
+                addValueLong(recoveryThrottleTimePerNode, recovery, "throttle_time_in_millis");
+                addDynamicMeasureLong(recoveryThrottleTimePerNode, nodeName, recovery, "throttle_time_in_millis");
 
-			addValueLong(recoveryThrottleTimePerNode, recovery, "throttle_time_in_millis");
-			addDynamicMeasureLong(recoveryThrottleTimePerNode, nodeName, recovery, "throttle_time_in_millis");
+                addValueLong(recoveryAsSourcePerNode, recovery, "current_as_source");
+                addDynamicMeasureLong(recoveryAsSourcePerNode, nodeName, recovery, "current_as_source");
 
-			addValueLong(recoveryAsSourcePerNode, recovery, "current_as_source");
-			addDynamicMeasureLong(recoveryAsSourcePerNode, nodeName, recovery, "current_as_source");
-
-			addValueLong(recoveryAsTargetPerNode, recovery, "current_as_target");
-			addDynamicMeasureLong(recoveryAsTargetPerNode, nodeName, recovery, "current_as_target");
+                addValueLong(recoveryAsTargetPerNode, recovery, "current_as_target");
+                addDynamicMeasureLong(recoveryAsTargetPerNode, nodeName, recovery, "current_as_target");
+            }
 		}
 	}
 
