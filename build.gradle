@@ -16,8 +16,8 @@ ext {
 }
 
 dependencies {
-    testCompile 'org.elasticsearch:elasticsearch:2.1.0'
-	testCompile 'org.elasticsearch:elasticsearch:2.1.0:tests'
+    testCompile 'org.elasticsearch:elasticsearch:2.1.1'
+	testCompile 'org.elasticsearch:elasticsearch:2.1.1:tests'
     testCompile 'org.apache.lucene:lucene-test-framework:5.3.1'
 }
 
