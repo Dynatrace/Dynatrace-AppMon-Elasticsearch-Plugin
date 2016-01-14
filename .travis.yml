@@ -6,7 +6,7 @@ before_install:
  - chmod +x gradlew
 
 install: ./gradlew compileJava
-script: ./gradlew eclipse check plugin jacocoTestReport javadoc
+script: ./gradlew eclipse check plugin jacocoTestReport javadoc && ./gradlew clean && ./gradlew -b test174.gradle check && ./gradlew clean && ./gradlew -b test145.gradle check
 
 after_failure:
 - cat build/test-results/*.xml
