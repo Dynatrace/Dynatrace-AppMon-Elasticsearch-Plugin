@@ -36,9 +36,9 @@ Create matching Eclipse project files
 
 	./gradlew eclipse
 
-Run unit tests
+Run unit tests against all supported Elasticsearch versions
 
-	./gradlew check jacocoTestReport
+	./gradlew check jacocoTestReport && ./gradlew clean && ./gradlew -b test174.gradle check && ./gradlew clean && ./gradlew -b test145.gradle check
 
 This uses the Elasticsearch integration test framework to run local tests of all the plugin functionality. It is 
 highly recommended to run these whenever you do code-changes! 
