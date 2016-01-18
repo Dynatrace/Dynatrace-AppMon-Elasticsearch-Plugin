@@ -539,54 +539,61 @@ public class ElasticsearchMonitor implements Monitor {
 			String nodeName = checkNotNull(node.getValue().get("name").asText());
 
 			JsonNode store = node.getValue().get("indices").get("store");
+			if(store != null) {
+				addValueLong(storeSizePerNode, store, "size_in_bytes");
+				addDynamicMeasureLong(storeSizePerNode, nodeName, store, "size_in_bytes");
 
-			addValueLong(storeSizePerNode, store, "size_in_bytes");
-			addDynamicMeasureLong(storeSizePerNode, nodeName, store, "size_in_bytes");
-
-			addValueLong(storeThrottleTimePerNode, store, "throttle_time_in_millis");
-			addDynamicMeasureLong(storeThrottleTimePerNode, nodeName, store, "throttle_time_in_millis");
+				addValueLong(storeThrottleTimePerNode, store, "throttle_time_in_millis");
+				addDynamicMeasureLong(storeThrottleTimePerNode, nodeName, store, "throttle_time_in_millis");
+			}
 
 			JsonNode indexing = node.getValue().get("indices").get("indexing");
+			if(indexing != null) {
+				addValueLong(indexingThrottleTimePerNode, indexing, "throttle_time_in_millis");
+				addDynamicMeasureLong(indexingThrottleTimePerNode, nodeName, indexing, "throttle_time_in_millis");
 
-			addValueLong(indexingThrottleTimePerNode, indexing, "throttle_time_in_millis");
-			addDynamicMeasureLong(indexingThrottleTimePerNode, nodeName, indexing, "throttle_time_in_millis");
+				addValueLong(indexingCurrentPerNode, indexing, "index_current");
+				addDynamicMeasureLong(indexingCurrentPerNode, nodeName, indexing, "index_current");
 
-			addValueLong(indexingCurrentPerNode, indexing, "index_current");
-			addDynamicMeasureLong(indexingCurrentPerNode, nodeName, indexing, "index_current");
-
-			addValueLong(deleteCurrentPerNode, indexing, "delete_current");
-			addDynamicMeasureLong(deleteCurrentPerNode, nodeName, indexing, "delete_current");
+				addValueLong(deleteCurrentPerNode, indexing, "delete_current");
+				addDynamicMeasureLong(deleteCurrentPerNode, nodeName, indexing, "delete_current");
+			}
 
 			JsonNode search = node.getValue().get("indices").get("search");
+			if(search != null) {
+				addValueLong(queryCurrentPerNode, search, "query_current");
+				addDynamicMeasureLong(queryCurrentPerNode, nodeName, search, "query_current");
 
-			addValueLong(queryCurrentPerNode, search, "query_current");
-			addDynamicMeasureLong(queryCurrentPerNode, nodeName, search, "query_current");
+				addValueLong(fetchCurrentPerNode, search, "fetch_current");
+				addDynamicMeasureLong(fetchCurrentPerNode, nodeName, search, "fetch_current");
 
-			addValueLong(fetchCurrentPerNode, search, "fetch_current");
-			addDynamicMeasureLong(fetchCurrentPerNode, nodeName, search, "fetch_current");
-
-            addValueLong(scrollCurrentPerNode, search, "scroll_current");
-            addDynamicMeasureLong(scrollCurrentPerNode, nodeName, search, "scroll_current");
+				addValueLong(scrollCurrentPerNode, search, "scroll_current");
+				addDynamicMeasureLong(scrollCurrentPerNode, nodeName, search, "scroll_current");
+			}
 
 			JsonNode queryCache = node.getValue().get("indices").get("query_cache");
-
-			addValueLong(queryCacheSizePerNode, queryCache, "memory_size_in_bytes");
-			addDynamicMeasureLong(queryCacheSizePerNode, nodeName, queryCache, "memory_size_in_bytes");
+			if(queryCache != null) {
+				addValueLong(queryCacheSizePerNode, queryCache, "memory_size_in_bytes");
+				addDynamicMeasureLong(queryCacheSizePerNode, nodeName, queryCache, "memory_size_in_bytes");
+			}
 
 			JsonNode fieldData = node.getValue().get("indices").get("fielddata");
-
-			addValueLong(fieldDataSizePerNode, fieldData, "memory_size_in_bytes");
-			addDynamicMeasureLong(fieldDataSizePerNode, nodeName, fieldData, "memory_size_in_bytes");
+			if(fieldData != null) {
+				addValueLong(fieldDataSizePerNode, fieldData, "memory_size_in_bytes");
+				addDynamicMeasureLong(fieldDataSizePerNode, nodeName, fieldData, "memory_size_in_bytes");
+			}
 
 			JsonNode percolate = node.getValue().get("indices").get("percolate");
-
-			addValueLong(percolateSizePerNode, percolate, "memory_size_in_bytes");
-			addDynamicMeasureLong(percolateSizePerNode, nodeName, percolate, "memory_size_in_bytes");
+			if(percolate != null) {
+				addValueLong(percolateSizePerNode, percolate, "memory_size_in_bytes");
+				addDynamicMeasureLong(percolateSizePerNode, nodeName, percolate, "memory_size_in_bytes");
+			}
 
 			JsonNode translog = node.getValue().get("indices").get("translog");
-
-			addValueLong(translogSizePerNode, translog, "size_in_bytes");
-			addDynamicMeasureLong(translogSizePerNode, nodeName, translog, "size_in_bytes");
+			if(translog != null) {
+				addValueLong(translogSizePerNode, translog, "size_in_bytes");
+				addDynamicMeasureLong(translogSizePerNode, nodeName, translog, "size_in_bytes");
+			}
 
 			JsonNode requestCache = node.getValue().get("indices").get("request_cache");
 			if(requestCache != null) {

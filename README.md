@@ -38,14 +38,13 @@ Create matching Eclipse project files
 
 Run unit tests against all supported Elasticsearch versions
 
-	./gradlew check jacocoTestReport && ./gradlew clean && ./gradlew -b test174.gradle check && ./gradlew clean && ./gradlew -b test145.gradle check
-
+	./gradlew check jacocoTestReport && ./checkPreviousVersions.sh
 This uses the Elasticsearch integration test framework to run local tests of all the plugin functionality. It is 
 highly recommended to run these whenever you do code-changes! 
 
 #### Build it
 
-	./gradlew -PdynaTraceVersion=1.0.0.0  plugin
+	./gradlew -PdynaTraceVersion=1.0.0.<x> plugin
 
 Note: Set the version higher every time you deploy to ensure the new version is loaded in the Dynatrace Server.
 

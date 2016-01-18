@@ -1,0 +1,10 @@
+apply from: 'common.gradle'
+
+sourceSets.test.java.srcDirs = ['testsrcBelowES2']
+
+dependencies {
+    testCompile 'org.elasticsearch:elasticsearch:1.6.2'
+    testCompile 'org.elasticsearch:elasticsearch:1.6.2:tests'
+    testCompile 'org.apache.lucene:lucene-test-framework:4.10.4'
+    testCompile 'com.carrotsearch.randomizedtesting:randomizedtesting-runner:2.1.14'
+}

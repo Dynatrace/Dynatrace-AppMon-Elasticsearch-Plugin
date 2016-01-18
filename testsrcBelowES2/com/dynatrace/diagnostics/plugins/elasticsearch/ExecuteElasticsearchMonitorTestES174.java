@@ -188,7 +188,6 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 				case MSR_MEM_MAX_DIRECT:
 				case MSR_INDEX_COUNT:
 				case MSR_SHARD_COUNT:
-				case MSR_TRANSLOG_SIZE:
 				case MSR_SEGMENT_COUNT:
 				case MSR_STORE_SIZE:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value > 0);
@@ -205,6 +204,7 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 				case MSR_MEM_MAX_NON_HEAP:
 				case MSR_FIELD_DATA_SIZE:
 				case MSR_FILE_SYSTEM_SIZE:
+				case MSR_TRANSLOG_SIZE:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value >= 0);
 					found++;
 					break;
