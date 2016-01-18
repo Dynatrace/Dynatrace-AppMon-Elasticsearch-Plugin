@@ -6,7 +6,7 @@ before_install:
  - chmod +x gradlew checkPreviousVersions.sh
 
 install: ./gradlew compileJava
-script: ./gradlew eclipse check plugin jacocoTestReport javadoc && ./gradlew ./checkPreviousVersions.sh
+script: ./gradlew eclipse check plugin jacocoTestReport javadoc && ./checkPreviousVersions.sh
 
 after_failure:
 - cat build/test-results/*.xml
