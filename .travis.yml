@@ -3,7 +3,7 @@ jdk:
   - oraclejdk7
  
 before_install:
- - chmod +x gradlew checkPreviousVersions.sh
+ - chmod +x gradlew checkElasticsearchVersions.sh
 
 install: ./gradlew compileJava
 script: ./gradlew eclipse check plugin jacocoTestReport javadoc && ./checkElasticsearchVersions.sh
