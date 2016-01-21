@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -81,6 +82,8 @@ public class ElasticsearchMonitor implements Monitor {
 
 	protected static final String MSR_DOCUMENT_COUNT = "DocCount";
 	protected static final String MSR_DELETED_COUNT = "DeletedCount";
+    protected static final String MSR_DOCUMENT_COUNT_PER_SECOND = "DocCountPerSecond";
+    protected static final String MSR_DELETED_COUNT_PER_SECOND = "DeletedCountPerSecond";
 
 	protected static final String MSR_STORE_SIZE = "StoreSize";
 	protected static final String MSR_STORE_THROTTLE_TIME = "StoreThrottleTime";
@@ -109,7 +112,8 @@ public class ElasticsearchMonitor implements Monitor {
 	protected static final String MSR_PERCOLATE_COUNT = "PercolateCount";
 
 	// for easier testing
-	protected static final String[] ALL_MEASURES  = new String[] {
+	@SuppressWarnings("unused")
+    protected static final String[] ALL_MEASURES  = new String[] {
 			MSR_NODE_COUNT,
 			MSR_DATA_NODE_COUNT,
 			MSR_ACTIVE_PRIMARY_SHARDS,
@@ -128,6 +132,8 @@ public class ElasticsearchMonitor implements Monitor {
 			MSR_SHARD_COUNT,
 			MSR_DOCUMENT_COUNT,
 			MSR_DELETED_COUNT,
+            MSR_DOCUMENT_COUNT_PER_SECOND,
+            MSR_DELETED_COUNT_PER_SECOND,
 
 			MSR_INDEXING_THROTTLE_TIME,
 			MSR_INDEXING_CURRNT,
@@ -164,6 +170,12 @@ public class ElasticsearchMonitor implements Monitor {
 	private long timeout;
 
 	private final ObjectMapper mapper = new ObjectMapper();
+
+	// for rate computations
+
+    // Rate-Measures
+    DerivedMeasure documentCount = new DerivedMeasure(TimeUnit.SECONDS);
+    DerivedMeasure deletedCount = new DerivedMeasure(TimeUnit.SECONDS);
 
 	/*
 	 * (non-Javadoc)
@@ -245,10 +257,6 @@ public class ElasticsearchMonitor implements Monitor {
 		Measure indexCount = new Measure();
 		Measure shardsPerState = new Measure("State");
 
-		// Documents
-		Measure documentCount = new Measure();
-		Measure deletedCount = new Measure();
-
 		// Stats
 		Measure storeSizePerNode = new Measure("Node");
 		Measure storeThrottleTimePerNode = new Measure("Node");
@@ -298,9 +306,9 @@ public class ElasticsearchMonitor implements Monitor {
 			retrieveClusterHealth(client, nodeCount, dataNodeCount, activePrimaryShards, activeShardsPercent, activeShards,
 					relocatingShards, initializingShards, unassignedShards, delayedUnassignedShards);
 
-			Map<String, String> nodeIdToName = retrieveNodeHealth(client, initHeap, maxHeap, initNonHeap, maxNonHeap, maxDirect);
+			retrieveNodeHealth(client, initHeap, maxHeap, initNonHeap, maxNonHeap, maxDirect);
 
-			retrieveClusterState(client, nodeIdToName, indexCount, shardsPerState,
+			retrieveClusterState(client, indexCount, shardsPerState,
 					fieldDataSize, fieldDataEvictions, queryCachePerState,
 					completionSize, segmentCount, segmentSizePerState,
 					fileDescPerStat, fileSystemPerStat, percolatePerState, documentCount, deletedCount);
@@ -334,8 +342,10 @@ public class ElasticsearchMonitor implements Monitor {
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_INDEX_COUNT, env, indexCount);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_SHARD_COUNT, env, shardsPerState);
 
-		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_DOCUMENT_COUNT, env, documentCount);
-		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_DELETED_COUNT, env, deletedCount);
+		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_DOCUMENT_COUNT, env, documentCount.getBaseMeasure());
+		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_DELETED_COUNT, env, deletedCount.getBaseMeasure());
+        writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_DOCUMENT_COUNT_PER_SECOND, env, documentCount.getDerivedMeasure());
+        writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_DELETED_COUNT_PER_SECOND, env, deletedCount.getDerivedMeasure());
 
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_STORE_SIZE, env, storeSizePerNode);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_STORE_THROTTLE_TIME, env, storeThrottleTimePerNode);
@@ -387,12 +397,12 @@ public class ElasticsearchMonitor implements Monitor {
 		}
 	}*/
 
-	private void retrieveClusterState(CloseableHttpClient client, Map<String,String> nodeIdToName,
-			Measure indexCount, Measure shardsPerState,
-			Measure fieldDataSize, Measure fieldDataEvictions, Measure queryCachePerState,
-			Measure completionSize, Measure segmentCount, Measure segmentSizePerState,
-			Measure fileDescPerStat, Measure fileSystemPerStat, Measure percolatePerState,
-			Measure documentCount, Measure deletedCount) throws IOException {
+	private void retrieveClusterState(CloseableHttpClient client,
+                                      Measure indexCount, Measure shardsPerState,
+                                      Measure fieldDataSize, Measure fieldDataEvictions, Measure queryCachePerState,
+                                      Measure completionSize, Measure segmentCount, Measure segmentSizePerState,
+                                      Measure fileDescPerStat, Measure fileSystemPerStat, Measure percolatePerState,
+                                      DerivedMeasure documentCount, DerivedMeasure deletedCount) throws IOException {
 		String json = simpleGet(client, url + "/_cluster/stats");
 		JsonNode clusterStats = mapper.readTree(json);
 
@@ -489,6 +499,7 @@ public class ElasticsearchMonitor implements Monitor {
 		}
 	}
 
+    @SuppressWarnings("unused")
     private Map<String,String> retrieveNodeHealth(CloseableHttpClient client, Measure initHeap, Measure maxHeap,
 			Measure initNonHeap, Measure maxNonHeap, Measure maxDirect) throws IOException {
 		Map<String,String> nodeIdToName = new HashMap<>();
@@ -697,6 +708,13 @@ public class ElasticsearchMonitor implements Monitor {
         JsonNode node = parent.get(key);
         if(node != null) {
             measure.setValue(node.asDouble());
+        }
+    }
+
+    private void setValue(DerivedMeasure measure, JsonNode parent, String key) {
+        JsonNode node = parent.get(key);
+        if(node != null) {
+            measure.setValue(node.asDouble(), System.currentTimeMillis());
         }
     }
 

@@ -88,18 +88,18 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 		monitor.setup(env);
 
 		log.info("First run without any data in indexes");
-		executeAndCheck(monitor, env);
+		executeAndCheck(monitor, env, false);
 
 		log.info("Preparing data in Elasticsearch node");
 		initializeIndex();
 
 		log.info("Second run with data in indexes");
-		executeAndCheck(monitor, env);
+		executeAndCheck(monitor, env, true);
 
 		monitor.teardown(env);
 	}
 
-	private void executeAndCheck(ElasticsearchMonitor monitor, MonitorEnvironment30Impl env) throws Exception {
+	private void executeAndCheck(ElasticsearchMonitor monitor, MonitorEnvironment30Impl env, boolean data) throws Exception {
 		monitor.execute(env);
 
 		logMeasures(env);
@@ -125,9 +125,13 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 
 				// some measures are 1 in our tests
 				case MSR_DATA_NODE_COUNT:
+					assertEquals("Had " + value + " for " + measure.getMetricName(), 1, value);
+					found++;
+					break;
+
 				case MSR_ACTIVE_PRIMARY_SHARDS:
 				case MSR_ACTIVE_SHARDS:
-					assertEquals("Had " + value + " for " + measure.getMetricName(), 1, value);
+					assertEquals("Had " + value + " for " + measure.getMetricName(), data ? 1 : 0, value);
 					found++;
 					break;
 
@@ -159,7 +163,7 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 				case MSR_RECOVERY_THROTTLE_TIME:
 				case MSR_RECOVERY_AS_SOURCE:
 				case MSR_RECOVERY_AS_TARGET:
-				case MSR_ACTIVE_SHARDS_PERCENT:
+                case MSR_ACTIVE_SHARDS_PERCENT:
 					assertEquals("Had " + value + " for " + measure.getMetricName(), 0, value);
 					found++;
 					break;
@@ -169,25 +173,32 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 				case MSR_MEM_MAX_HEAP:
 				case MSR_MEM_INIT_NON_HEAP:
 				case MSR_MEM_MAX_DIRECT:
-				case MSR_INDEX_COUNT:
-				case MSR_SHARD_COUNT:
-				case MSR_SEGMENT_COUNT:
-				case MSR_STORE_SIZE:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value > 0);
 					found++;
 					break;
 
+				case MSR_INDEX_COUNT:
+				case MSR_SHARD_COUNT:
+				case MSR_SEGMENT_COUNT:
+				case MSR_STORE_SIZE:
+                case MSR_DOCUMENT_COUNT_PER_SECOND:
+					assertTrue("Had " + value + " for " + measure.getMetricName(), value > (data ? 0 : -1));
+					found++;
+					break;
+
 				case MSR_DOCUMENT_COUNT:
-					assertEquals("Had " + value + " for " + measure.getMetricName(), 12, value);
+                    assertEquals("Had " + value + " for " + measure.getMetricName(), data ? 12 : 0, value);
 					found++;
 					break;
 
 				// some might be zero or higher depending on timing
 				case MSR_DELETED_COUNT:
+                case MSR_DELETED_COUNT_PER_SECOND:
 				case MSR_MEM_MAX_NON_HEAP:
 				case MSR_FIELD_DATA_SIZE:
 				case MSR_FILE_SYSTEM_SIZE:
 				case MSR_TRANSLOG_SIZE:
+				case MSR_FILE_DESCRIPTIOR_LIMIT:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value >= 0);
 					found++;
 					break;
@@ -195,7 +206,6 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 				// these are negative, probably they were not computed yet after startup
 				case MSR_PERCOLATE_SIZE:
 				case MSR_FILE_DESCRIPTIOR_COUNT:
-				case MSR_FILE_DESCRIPTIOR_LIMIT:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value != 0);
 					found++;
 					break;

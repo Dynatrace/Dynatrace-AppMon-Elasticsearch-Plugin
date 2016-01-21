@@ -53,7 +53,9 @@
 
       <metric name="DocCount" description="Number of documents" unit="number" defaultrate="purepath" />
       <metric name="DeletedCount" description="Number of deleted documents" unit="number" defaultrate="purepath" />
-      
+      <metric name="DocCountPerSecond" description="Derived measure which provides the number of documents added per second since the monitor was last run" unit="number" defaultrate="purepath" />
+      <metric name="DeletedCountPerSecond" description="Derived measure which provides the number of documents deleted per second since the monitor was last run" unit="number" defaultrate="purepath" />
+
       <metric name="StoreSize" description="Size of storage overall per node" unit="bytes" defaultrate="purepath" />
       <metric name="StoreThrottleTime" description="Time that storing was throttled per node" calculatedelta="true" unit="ms" defaultrate="purepath" />
       <metric name="IndexingThrottleTime" description="Time that indexing was throttled per node" calculatedelta="true" unit="ms" defaultrate="purepath" />
