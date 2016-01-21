@@ -75,6 +75,7 @@
       <metric name="SegmentCount" description="Number of segments" unit="number" defaultrate="purepath" />
       <metric name="SegmentSize" description="Size of segments, split by different segment-measures" unit="bytes" defaultrate="purepath" />
       <metric name="FileDescriptorCount" description="File descriptor metrics split by different file descriptor measures" unit="number" defaultrate="purepath" />
+      <metric name="FileDescriptorLimit" description="Allowed number of max file descriptor on the operating system split by node" unit="number" defaultrate="purepath" />
       <metric name="FileSystemSize" description="File system metrics split by different file system measures" unit="bytes" defaultrate="purepath" />
       <metric name="PercolateCount" description="Percolate metrics split by different percolate measures" unit="number" defaultrate="purepath" />
     </metricgroup>

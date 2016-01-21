@@ -71,44 +71,27 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 
     @Test
 	public void testMain() throws Exception {
-    	log.info("Preparing data in Elasticsearch node");
-    	initializeIndex();
-
         log.info("Starting test-run of Elasticsearch Monitor");
 
 		ElasticsearchMonitor monitor = new ElasticsearchMonitor();
-		PluginInstanceConfig pluginConfig = new PluginInstanceConfig();
-		pluginConfig.setKey("elasticsearch");
-
-		{
-			PluginPropertyInstanceConfig environment = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_URL);
-			environment.setSourceTypeId(StringType.TYPE_ID);
-			environment.setValue(URL);
-			pluginConfig.addPluginPropertyConfig(environment);
-		}
-
-		PluginTypeConfig pluginTypeConfig = new PluginTypeConfig();
-		pluginTypeConfig.setKey("elasticsearch");
-
-		{
-			PluginPropertyTypeConfig environmentType = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_URL, new StringType("some",
-					""));
-			environmentType.setSourceTypeId(StringType.TYPE_ID);
-			environmentType.setType(StringType.TYPE_ID);
-			environmentType.setValue(URL);
-			pluginTypeConfig.addPluginPropertyConfig(environmentType);
-		}
-
-		// register all measure groups to have them available during the test
-		MonitorEnvironment30Impl env = new MonitorEnvironment30Impl(null, pluginConfig, pluginTypeConfig, false, null);
-		{
-			for(String measure : ElasticsearchMonitor.ALL_MEASURES) {
-				createMeasure(env, ElasticsearchMonitor.METRIC_GROUP_ELASTICSEARCH, measure);
-			}
-		}
+		MonitorEnvironment30Impl env = prepareMonitorEnvironment();
 
 		// now start executing the plugin
 		monitor.setup(env);
+
+		log.info("First run without any data in indexes");
+		executeAndCheck(monitor, env);
+
+		log.info("Preparing data in Elasticsearch node");
+		initializeIndex();
+
+		log.info("Second run with data in indexes");
+		executeAndCheck(monitor, env);
+
+		monitor.teardown(env);
+	}
+
+	private void executeAndCheck(ElasticsearchMonitor monitor, MonitorEnvironment30Impl env) throws Exception {
 		monitor.execute(env);
 
 		logMeasures(env);
@@ -201,6 +184,7 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 				// these are negative, probably they were not computed yet after startup
 				case MSR_PERCOLATE_SIZE:
 				case MSR_FILE_DESCRIPTIOR_COUNT:
+				case MSR_FILE_DESCRIPTIOR_LIMIT:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value != 0);
 					found++;
 					break;
@@ -211,8 +195,39 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 			}
 		}
 		assertEquals("Expected to find all measures, but had: " + found, ElasticsearchMonitor.ALL_MEASURES.length, found);
+	}
 
-		monitor.teardown(env);
+	private MonitorEnvironment30Impl prepareMonitorEnvironment() {
+		PluginInstanceConfig pluginConfig = new PluginInstanceConfig();
+		pluginConfig.setKey("elasticsearch");
+
+		{
+			PluginPropertyInstanceConfig environment = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_URL);
+			environment.setSourceTypeId(StringType.TYPE_ID);
+			environment.setValue(URL);
+			pluginConfig.addPluginPropertyConfig(environment);
+		}
+
+		PluginTypeConfig pluginTypeConfig = new PluginTypeConfig();
+		pluginTypeConfig.setKey("elasticsearch");
+
+		{
+			PluginPropertyTypeConfig environmentType = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_URL, new StringType("some",
+					""));
+			environmentType.setSourceTypeId(StringType.TYPE_ID);
+			environmentType.setType(StringType.TYPE_ID);
+			environmentType.setValue(URL);
+			pluginTypeConfig.addPluginPropertyConfig(environmentType);
+		}
+
+		// register all measure groups to have them available during the test
+		MonitorEnvironment30Impl env = new MonitorEnvironment30Impl(null, pluginConfig, pluginTypeConfig, false, null);
+		{
+			for(String measure : ElasticsearchMonitor.ALL_MEASURES) {
+				createMeasure(env, ElasticsearchMonitor.METRIC_GROUP_ELASTICSEARCH, measure);
+			}
+		}
+		return env;
 	}
 
 	private static void logMeasures(MonitorEnvironment30Impl env) {

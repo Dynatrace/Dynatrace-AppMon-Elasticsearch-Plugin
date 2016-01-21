@@ -104,6 +104,7 @@ public class ElasticsearchMonitor implements Monitor {
 	protected static final String MSR_SEGMENT_COUNT = "SegmentCount";
 	protected static final String MSR_SEGMENT_SIZE = "SegmentSize";
 	protected static final String MSR_FILE_DESCRIPTIOR_COUNT = "FileDescriptorCount";
+    protected static final String MSR_FILE_DESCRIPTIOR_LIMIT = "FileDescriptorLimit";
 	protected static final String MSR_FILE_SYSTEM_SIZE = "FileSystemSize";
 	protected static final String MSR_PERCOLATE_COUNT = "PercolateCount";
 
@@ -145,6 +146,7 @@ public class ElasticsearchMonitor implements Monitor {
 			MSR_SEGMENT_COUNT,
 			MSR_SEGMENT_SIZE,
 			MSR_FILE_DESCRIPTIOR_COUNT,
+            MSR_FILE_DESCRIPTIOR_LIMIT,
 			MSR_FILE_SYSTEM_SIZE,
 			MSR_PERCOLATE_COUNT,
 			MSR_STORE_SIZE,
@@ -264,6 +266,7 @@ public class ElasticsearchMonitor implements Monitor {
 		Measure recoveryThrottleTimePerNode = new Measure("Node");
 		Measure recoveryAsSourcePerNode = new Measure("Node");
 		Measure recoveryAsTargetPerNode = new Measure("Node");
+        Measure fileDescLimitPerNode = new Measure("Node");
 
 		Measure fieldDataSize = new Measure();
 		Measure fieldDataEvictions = new Measure();
@@ -307,7 +310,7 @@ public class ElasticsearchMonitor implements Monitor {
 			retrieveNodeStats(client, storeSizePerNode, storeThrottleTimePerNode, indexingThrottleTimePerNode, indexingCurrentPerNode,
 					deleteCurrentPerNode, queryCurrentPerNode, fetchCurrentPerNode, scrollCurrentPerNode, queryCacheSizePerNode,
 					fieldDataSizePerNode, percolateSizePerNode, translogSizePerNode, requestCacheSizePerNode, recoveryThrottleTimePerNode,
-					recoveryAsSourcePerNode, recoveryAsTargetPerNode);
+					recoveryAsSourcePerNode, recoveryAsTargetPerNode, fileDescLimitPerNode);
 		}
 
 		// retrieve and set the measurements
@@ -358,6 +361,7 @@ public class ElasticsearchMonitor implements Monitor {
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_SEGMENT_COUNT, env, segmentCount);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_SEGMENT_SIZE, env, segmentSizePerState);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_FILE_DESCRIPTIOR_COUNT, env, fileDescPerStat);
+        writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_FILE_DESCRIPTIOR_LIMIT, env, fileDescLimitPerNode);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_FILE_SYSTEM_SIZE, env, fileSystemPerStat);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_PERCOLATE_COUNT, env, percolatePerState);
 	}
@@ -534,7 +538,7 @@ public class ElasticsearchMonitor implements Monitor {
 			Measure queryCurrentPerNode, Measure fetchCurrentPerNode, Measure scrollCurrentPerNode,
 			Measure queryCacheSizePerNode, Measure fieldDataSizePerNode, Measure percolateSizePerNode,
 			Measure translogSizePerNode, Measure requestCacheSizePerNode, Measure recoveryThrottleTimePerNode,
-			Measure recoveryAsSourcePerNode, Measure recoveryAsTargetPerNode) throws IOException {
+			Measure recoveryAsSourcePerNode, Measure recoveryAsTargetPerNode, Measure fileDescLimitPerNode) throws IOException {
 		String json = simpleGet(client, url + "/_nodes/stats");
 		JsonNode nodeHealth = mapper.readTree(json);
 
@@ -547,6 +551,12 @@ public class ElasticsearchMonitor implements Monitor {
                 nodeName = "unknown-node";
             } else {
                 nodeName = checkNotNull(name.asText());
+            }
+
+            JsonNode process = node.getValue().get("process");
+            if(process != null) {
+                addValueLong(fileDescLimitPerNode, process, "max_file_descriptors");
+                addDynamicMeasureLong(fileDescLimitPerNode, nodeName, process, "max_file_descriptors");
             }
 
             JsonNode indices = node.getValue().get("indices");
