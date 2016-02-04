@@ -746,10 +746,10 @@ public class ElasticsearchMonitor implements Monitor {
         }
     }
 
-    private void addDynamicMeasureLong(Measure measure, String nodeName, JsonNode jsonNode, String jsonMeasure) {
+    private void addDynamicMeasureLong(Measure measure, String dynamicMeasureName, JsonNode jsonNode, String jsonMeasure) {
         JsonNode value = jsonNode.get(jsonMeasure);
         if(value != null) {
-            measure.addDynamicMeasure(nodeName, value.asLong());
+            measure.addDynamicMeasure(dynamicMeasureName, value.asLong());
         }
     }
 
