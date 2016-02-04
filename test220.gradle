@@ -1,0 +1,10 @@
+apply from: 'common.gradle'
+
+sourceSets.test.java.srcDirs = ['testsrcES2']
+
+dependencies {
+    testCompile 'org.elasticsearch:elasticsearch:2.2.0'
+    testCompile 'org.elasticsearch:elasticsearch:2.2.0:tests'
+    testCompile 'org.apache.lucene:lucene-test-framework:5.4.1'
+    testCompile 'com.carrotsearch.randomizedtesting:randomizedtesting-runner:2.2.0'
+}
