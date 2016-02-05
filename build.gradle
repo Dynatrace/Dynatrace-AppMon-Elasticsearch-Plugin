@@ -16,11 +16,6 @@ ext {
 	}
 }
 
-dependencies {
-	// for MockRESTServer
-	testCompile 'org.dstadler:commons-test:1.0.0.+'
-}
-
 eclipse {
 	//noinspection GroovyAssignabilityCheck
 	project {

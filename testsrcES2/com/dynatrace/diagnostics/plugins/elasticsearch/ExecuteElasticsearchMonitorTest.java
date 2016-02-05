@@ -5,24 +5,6 @@
  */
 package com.dynatrace.diagnostics.plugins.elasticsearch;
 
-import static com.dynatrace.diagnostics.plugins.elasticsearch.ElasticsearchMonitor.*;
-import static org.elasticsearch.cluster.metadata.IndexMetaData.SETTING_NUMBER_OF_REPLICAS;
-import static org.elasticsearch.cluster.metadata.IndexMetaData.SETTING_NUMBER_OF_SHARDS;
-import static org.elasticsearch.test.hamcrest.ElasticsearchAssertions.assertAcked;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.test.ESIntegTestCase;
-import org.elasticsearch.test.ESIntegTestCase.ClusterScope;
-import org.elasticsearch.test.ESIntegTestCase.Scope;
-import org.junit.Test;
-
 import com.carrotsearch.randomizedtesting.annotations.ThreadLeakScope;
 import com.dynatrace.diagnostics.global.PluginInstanceConfig;
 import com.dynatrace.diagnostics.global.PluginPropertyInstanceConfig;
@@ -33,6 +15,25 @@ import com.dynatrace.diagnostics.sdk.MonitorEnvironment30Impl;
 import com.dynatrace.diagnostics.sdk.MonitorMeasure30Impl;
 import com.dynatrace.diagnostics.sdk.MonitorMeasureKey;
 import com.dynatrace.diagnostics.sdk.types.StringType;
+import org.dstadler.commons.testing.MemoryLeakVerifier;
+import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.test.ESIntegTestCase;
+import org.elasticsearch.test.ESIntegTestCase.ClusterScope;
+import org.elasticsearch.test.ESIntegTestCase.Scope;
+import org.junit.AfterClass;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import static com.dynatrace.diagnostics.plugins.elasticsearch.ElasticsearchMonitor.*;
+import static org.elasticsearch.cluster.metadata.IndexMetaData.SETTING_NUMBER_OF_REPLICAS;
+import static org.elasticsearch.cluster.metadata.IndexMetaData.SETTING_NUMBER_OF_SHARDS;
+import static org.elasticsearch.test.hamcrest.ElasticsearchAssertions.assertAcked;
 
 /**
  * Simple test program which invokes the Elasticsearch Monitor with
@@ -51,8 +52,20 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 	// which URL do we use in test
 	private static final String URL = "http://localhost:19300";
 
+	private static MemoryLeakVerifier verifier = new MemoryLeakVerifier();
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		log.info("Tear down class...");
+		ESIntegTestCase.afterClass();
+
+		verifier.assertGarbageCollected();
+		log.info("Tear down class done");
+	}
+
 	@Override
     protected Settings nodeSettings(int nodeOrdinal) {
+		log.info("Node settings...");
         return Settings.settingsBuilder()
         		.put("http.enabled", "true")
         		// changing the port made the test flaky...
@@ -63,6 +76,7 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 
     @Override
     public Settings indexSettings() {
+		log.info("Index settings...");
         Settings.Builder builder = Settings.builder();
         builder.put(SETTING_NUMBER_OF_SHARDS, 1);
         builder.put(SETTING_NUMBER_OF_REPLICAS, 0);
@@ -89,6 +103,12 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 		executeAndCheck(monitor, env, true);
 
 		monitor.teardown(env);
+
+		verifier.addObject(monitor);
+		verifier.addObject(env);
+		verifier.addObject(client());
+		verifier.addObject(indexSettings());
+		verifier.addObject(cluster());
 	}
 
 	private void executeAndCheck(ElasticsearchMonitor monitor, MonitorEnvironment30Impl env, boolean data) throws Exception {
