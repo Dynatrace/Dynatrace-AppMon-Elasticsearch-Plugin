@@ -101,7 +101,7 @@ public class ElasticsearchMonitorMockRESTTest {
 			double value = measurement.doubleValue();
 			switch(measure.getMetricName()) {
                 case MSR_DOCUMENT_COUNT_PER_SECOND:
-					assertEquals("Had " + value + " for " + measure.getMetricName(), expectedValue, value, uncertainty);
+					assertEquals("Had " + value + " for " + measure.getMetricName() + " and uncertainty " + uncertainty, expectedValue, value, uncertainty);
 					found++;
 					break;
 			}
