@@ -5,7 +5,6 @@ apply plugin: 'eclipse'
 
 // Note: we could use the osgi-plugin of Gradle to do some of the things that we do manually here for now!
 
-//noinspection GroovyUnusedAssignment
 sourceCompatibility = 1.7
 
 sourceSets.test.java.srcDirs = ['testsrc']
@@ -17,7 +16,6 @@ ext {
 }
 
 eclipse {
-	//noinspection GroovyAssignabilityCheck
 	project {
 		buildCommand 'org.eclipse.pde.ManifestBuilder'
 		buildCommand 'org.eclipse.pde.SchemaBuilder'
@@ -50,6 +48,7 @@ task validateXml {
 			fileset(dir: project.projectDir) {
 				include(name: '**/*.xml')
 				exclude(name: '.ant-targets-build.xml')
+				exclude(name: 'build/**')
 			}
 		}
 	}
@@ -97,8 +96,8 @@ jar {
     	exclude 'font-awesome/**'
     	exclude 'js/**'
     	exclude 'com/dynatrace/diagnostics/**'
-		exclude 'org/eclipse/osgi/**'
-		exclude 'org/osgi/**'
+    	exclude 'org/eclipse/osgi/**'
+    	exclude 'org/osgi/**'
     	exclude 'icons/**'
         exclude 'prefuse/**'
         exclude 'dashboards/**'
@@ -113,7 +112,7 @@ jar {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.8'
+    gradleVersion = '2.12'
 }
 
 configurations {
@@ -122,10 +121,10 @@ configurations {
 
 dependencies {
     junitAnt 'junit:junit:4.+'
-    junitAnt('org.apache.ant:ant-junit:1.9.3') {
+    junitAnt('org.apache.ant:ant-junit:1.9.7') {
         transitive = false
     }
-    junitAnt('org.apache.ant:ant-junit4:1.9.3') {
+    junitAnt('org.apache.ant:ant-junit4:1.9.7') {
         transitive = false
      }
 }
@@ -140,9 +139,7 @@ task plugin(dependsOn: jar) {
 	doLast {
 		ant.copy(todir: 'plugin/plugin', file:'build/libs/Dynatrace-Elasticsearch-Plugin.jar', verbose:true)
 		ant.replaceregexp(file:'plugin/META-INF/MANIFEST.MF', match:'Bundle-Version: \\d+.\\d+.\\d+.\\d+', replace:'Bundle-Version: ' + dynaTraceVersion)
-		//noinspection GroovyAssignabilityCheck
 		ant.ant(antfile:'plugin/build.xml', inheritAll:'false') {
-			//noinspection GroovyAssignabilityCheck
 			property(name:'version',value:dynaTraceVersion)
 		}
 	}

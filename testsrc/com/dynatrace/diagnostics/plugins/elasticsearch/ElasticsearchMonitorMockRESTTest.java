@@ -56,11 +56,11 @@ public class ElasticsearchMonitorMockRESTTest {
 
         runWithResponse(monitor, DOC500_RESPONSE, 0, 0.01);
         Thread.sleep(1000);
-        runWithResponse(monitor, DOC1000_RESPONSE, 500, 100);   // high uncertainty needed here as it depends on timing
+        runWithResponse(monitor, DOC1000_RESPONSE, 500, 120);   // high uncertainty needed here as it depends on timing
         Thread.sleep(1000);
         runWithResponse(monitor, DOC500_RESPONSE, 0, 0.01);   // no negative value should be returned on lower measure than before
         Thread.sleep(1000);
-        runWithResponse(monitor, DOC1000_RESPONSE, 500, 100);   // high uncertainty needed here as it depends on timing
+        runWithResponse(monitor, DOC1000_RESPONSE, 500, 120);   // high uncertainty needed here as it depends on timing
         Thread.sleep(1000);
         runWithResponse(monitor, DOC1000_RESPONSE, 0, 0.01);
 
@@ -101,7 +101,7 @@ public class ElasticsearchMonitorMockRESTTest {
 			double value = measurement.doubleValue();
 			switch(measure.getMetricName()) {
                 case MSR_DOCUMENT_COUNT_PER_SECOND:
-					assertEquals("Had " + value + " for " + measure.getMetricName() + " and uncertainty " + uncertainty, expectedValue, value, uncertainty);
+					assertEquals("Had " + value + " for " + measure.getMetricName() + ", allowed uncertainty: " + uncertainty, expectedValue, value, uncertainty);
 					found++;
 					break;
 			}
