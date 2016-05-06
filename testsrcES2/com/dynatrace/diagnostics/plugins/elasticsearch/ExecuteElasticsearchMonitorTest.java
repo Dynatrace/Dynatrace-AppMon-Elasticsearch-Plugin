@@ -66,7 +66,7 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 	@Override
     protected Settings nodeSettings(int nodeOrdinal) {
 		log.info("Node settings...");
-        return Settings.settingsBuilder()
+        return Settings.builder()
         		.put("http.enabled", "true")
         		// changing the port made the test flaky...
         		//.put("http.port", "19200")
