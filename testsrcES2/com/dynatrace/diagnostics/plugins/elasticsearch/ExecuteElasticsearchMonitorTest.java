@@ -23,17 +23,17 @@ import org.elasticsearch.test.ESIntegTestCase;
 import org.elasticsearch.test.ESIntegTestCase.ClusterScope;
 import org.elasticsearch.test.ESIntegTestCase.Scope;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static com.dynatrace.diagnostics.plugins.elasticsearch.ElasticsearchMonitor.*;
 import static org.elasticsearch.cluster.metadata.IndexMetaData.SETTING_NUMBER_OF_REPLICAS;
 import static org.elasticsearch.cluster.metadata.IndexMetaData.SETTING_NUMBER_OF_SHARDS;
 import static org.elasticsearch.test.hamcrest.ElasticsearchAssertions.assertAcked;
+import static org.junit.Assert.*;
 
 /**
  * Simple test program which invokes the Elasticsearch Monitor with
@@ -116,8 +116,9 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 
 		logMeasures(env);
 
-		// we can expect some measure exactly in this test as we start a local node
-		int found = 0;
+        Set<String> remainingMeasures = new HashSet<>(Arrays.asList(ElasticsearchMonitor.ALL_MEASURES));
+
+        // we can expect some measure exactly in this test as we start a local node
 		for(MonitorMeasure measure : env.getMonitorMeasures()) {
 			assertNotNull(measure);
 			assertNotNull(measure.getMetricName());
@@ -130,26 +131,22 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 				// sometimes this is 1, sometimes 2, is this because of randomized testing?
 				case MSR_NODE_COUNT:
 					if(value != 1 && value != 2) {
-						assertEquals("Should have one data and potentially one client node in tests", 2, value);
+						Assert.assertEquals("Should have one data and potentially one client node in tests", 2, value);
 					}
-					found++;
 					break;
 
 				// some measures are 1 in our tests
 				case MSR_DATA_NODE_COUNT:
-					assertEquals("Had " + value + " for " + measure.getMetricName(), 1, value);
-					found++;
+					Assert.assertEquals("Had " + value + " for " + measure.getMetricName(), 1, value);
 					break;
 
 				case MSR_ACTIVE_PRIMARY_SHARDS:
 				case MSR_ACTIVE_SHARDS:
-					assertEquals("Had " + value + " for " + measure.getMetricName(), data ? 1 : 0, value);
-					found++;
+					Assert.assertEquals("Had " + value + " for " + measure.getMetricName(), data ? 1 : 0, value);
 					break;
 
 				case MSR_ACTIVE_SHARDS_PERCENT:
-					assertEquals("Had " + value + " for " + measure.getMetricName(), 100, value);
-					found++;
+					Assert.assertEquals("Had " + value + " for " + measure.getMetricName(), 100, value);
 					break;
 
 				// some measures are 0 in our tests
@@ -173,8 +170,7 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 				case MSR_RECOVERY_THROTTLE_TIME:
 				case MSR_RECOVERY_AS_SOURCE:
 				case MSR_RECOVERY_AS_TARGET:
-					assertEquals("Had " + value + " for " + measure.getMetricName(), 0, value);
-					found++;
+					Assert.assertEquals("Had " + value + " for " + measure.getMetricName(), 0, value);
 					break;
 
 				// these should have some value
@@ -183,7 +179,6 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 				case MSR_MEM_INIT_NON_HEAP:
 				case MSR_MEM_MAX_DIRECT:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value > 0);
-					found++;
 					break;
 
 				case MSR_INDEX_COUNT:
@@ -193,12 +188,10 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
                 case MSR_STORE_SIZE:
                 case MSR_DOCUMENT_COUNT_PER_SECOND:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value > (data ? 0 : -1));
-					found++;
 					break;
 
 				case MSR_DOCUMENT_COUNT:
-                    assertEquals("Had " + value + " for " + measure.getMetricName(), data ? 12 : 0, value);
-					found++;
+					Assert.assertEquals("Had " + value + " for " + measure.getMetricName(), data ? 12 : 0, value);
 					break;
 
 				// some might be zero or higher depending on timing
@@ -208,23 +201,29 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 				case MSR_FIELD_DATA_SIZE:
 				case MSR_FILE_SYSTEM_SIZE:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value >= 0);
-					found++;
 					break;
 
 				// these are negative, probably they were not computed yet after startup
-				case MSR_PERCOLATE_SIZE:
 				case MSR_FILE_DESCRIPTIOR_COUNT:
 				case MSR_FILE_DESCRIPTIOR_LIMIT:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value != 0);
-					found++;
 					break;
 
+                // in 5.0.0-alpha1, this is returned as 0 whilte it was -1 in 2.x and below
+				case MSR_PERCOLATE_SIZE:
+                    break;
 
 				default:
 					fail("Unexpected measure found: " + measure + ", value: " + ((MonitorMeasure30Impl)measure).getMeasurement());
 			}
+
+            assertTrue("Metric " + measure.getMetricName() + " was not found in the list of remaining measures, it seems it was sent twice",
+                    remainingMeasures.remove(measure.getMetricName()));
 		}
-		assertEquals("Expected to find all measures, but had: " + found, ElasticsearchMonitor.ALL_MEASURES.length, found);
+
+        assertTrue("Had remaining measures that were not received: " + remainingMeasures, remainingMeasures.isEmpty());
+		Assert.assertEquals("Expected to find all measures, but had: " + env.getMonitorMeasures().size(),
+                ElasticsearchMonitor.ALL_MEASURES.length, env.getMonitorMeasures().size());
 	}
 
 	private MonitorEnvironment30Impl prepareMonitorEnvironment() {

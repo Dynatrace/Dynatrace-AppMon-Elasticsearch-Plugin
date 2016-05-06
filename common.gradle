@@ -43,9 +43,6 @@ configurations {
     //all*.exclude group: 'org.eclipse.jetty'
     //all*.exclude group: 'xerces'
     //all*.exclude group: 'xalan'
-
-    // not used in our code and clashes with the one in GWT
-    all*.exclude group: 'log4j'
 }
 
 dependencies {

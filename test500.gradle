@@ -2,10 +2,24 @@ apply from: 'common.gradle'
 
 sourceSets.test.java.srcDirs = ['testsrcES2']
 
+repositories {
+    // the alpha-versions of 5.0 require additional snapshot-repositories
+    maven { url 'http://download.elastic.co/lucenesnapshots/f0aa4fc' }
+}
+
 dependencies {
     testCompile 'org.elasticsearch:elasticsearch:5.0.0-alpha1'
-    testCompile 'org.elasticsearch:elasticsearch:5.0.0-alpha1:tests'
     testCompile 'org.elasticsearch.test:framework:5.0.0-alpha1'
+}
+
+configurations {
+    // this clashes with the separate hamcrest-core and hamcrest-library 
+    // pulled in by junit et.al.
+    all*.exclude group: 'org.hamcrest', module: 'hamcrest-all'
+    
+    // the new securemock contains these as well
+    // See 
+    all*.exclude group: 'org.objenesis', module: 'objenesis'
 }
 
 test {
