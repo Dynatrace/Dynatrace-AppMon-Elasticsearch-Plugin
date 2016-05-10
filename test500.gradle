@@ -18,7 +18,7 @@ configurations {
     all*.exclude group: 'org.hamcrest', module: 'hamcrest-all'
     
     // the new securemock contains these as well
-    // See 
+    // See https://github.com/elastic/elasticsearch/issues/18063
     all*.exclude group: 'org.objenesis', module: 'objenesis'
 }
 
