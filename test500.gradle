@@ -22,17 +22,4 @@ configurations {
     all*.exclude group: 'org.objenesis', module: 'objenesis'
 }
 
-test {
-    systemProperties = System.properties
-
-    // see https://github.com/elastic/elasticsearch/issues/16459
-    systemProperty 'tests.security.manager', 'false'
-
-    systemProperty 'jsse.enableSNIExtension', 'false'
-
-    // show standard out and standard error of the test JVM(s) on the console
-    //testLogging.showStandardStreams = true
-
-    // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
-    systemProperties['user.dir'] = workingDir
-}
+apply from: 'common22x.gradle'

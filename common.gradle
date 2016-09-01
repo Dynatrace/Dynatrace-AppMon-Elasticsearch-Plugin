@@ -86,6 +86,10 @@ test {
     // show standard out and standard error of the test JVM(s) on the console
     //testLogging.showStandardStreams = true
 
+    // we get errors if a local JNA is found
+    // see http://stackoverflow.com/questions/26434884/how-do-i-fix-incompatible-jna-native-library-when-using-putty-gradle-and-the
+    systemProperties['jna.boot.library.path'] = null
+    
     // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
     systemProperties['user.dir'] = workingDir
 }
