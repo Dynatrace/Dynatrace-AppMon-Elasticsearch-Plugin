@@ -88,7 +88,7 @@ public class ElasticsearchMonitor implements Monitor {
 	protected static final String MSR_STORE_SIZE = "StoreSize";
 	protected static final String MSR_STORE_THROTTLE_TIME = "StoreThrottleTime";
 	protected static final String MSR_INDEXING_THROTTLE_TIME = "IndexingThrottleTime";
-	protected static final String MSR_INDEXING_CURRNT = "IndexingCurrent";
+	protected static final String MSR_INDEXING_CURRENT = "IndexingCurrent";
 	protected static final String MSR_DELETE_CURRENT = "DeleteCurrent";
 	protected static final String MSR_QUERY_CURRENT = "QueryCurrent";
 	protected static final String MSR_FETCH_CURRENT = "FetchCurrent";
@@ -106,8 +106,8 @@ public class ElasticsearchMonitor implements Monitor {
 	protected static final String MSR_COMPLETION_SIZE = "CompletionSize";
 	protected static final String MSR_SEGMENT_COUNT = "SegmentCount";
 	protected static final String MSR_SEGMENT_SIZE = "SegmentSize";
-	protected static final String MSR_FILE_DESCRIPTIOR_COUNT = "FileDescriptorCount";
-    protected static final String MSR_FILE_DESCRIPTIOR_LIMIT = "FileDescriptorLimit";
+	protected static final String MSR_FILE_DESCRIPTOR_COUNT = "FileDescriptorCount";
+    protected static final String MSR_FILE_DESCRIPTOR_LIMIT = "FileDescriptorLimit";
 	protected static final String MSR_FILE_SYSTEM_SIZE = "FileSystemSize";
 	protected static final String MSR_PERCOLATE_COUNT = "PercolateCount";
 
@@ -136,7 +136,7 @@ public class ElasticsearchMonitor implements Monitor {
             MSR_DELETED_COUNT_PER_SECOND,
 
 			MSR_INDEXING_THROTTLE_TIME,
-			MSR_INDEXING_CURRNT,
+			MSR_INDEXING_CURRENT,
 			MSR_DELETE_CURRENT,
 			MSR_QUERY_CURRENT,
 			MSR_FETCH_CURRENT,
@@ -151,8 +151,8 @@ public class ElasticsearchMonitor implements Monitor {
 			MSR_COMPLETION_SIZE,
 			MSR_SEGMENT_COUNT,
 			MSR_SEGMENT_SIZE,
-			MSR_FILE_DESCRIPTIOR_COUNT,
-            MSR_FILE_DESCRIPTIOR_LIMIT,
+			MSR_FILE_DESCRIPTOR_COUNT,
+			MSR_FILE_DESCRIPTOR_LIMIT,
 			MSR_FILE_SYSTEM_SIZE,
 			MSR_PERCOLATE_COUNT,
 			MSR_STORE_SIZE,
@@ -364,7 +364,7 @@ public class ElasticsearchMonitor implements Monitor {
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_STORE_SIZE, env, storeSizePerNode);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_STORE_THROTTLE_TIME, env, storeThrottleTimePerNode);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_INDEXING_THROTTLE_TIME, env, indexingThrottleTimePerNode);
-		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_INDEXING_CURRNT, env, indexingCurrentPerNode);
+		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_INDEXING_CURRENT, env, indexingCurrentPerNode);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_DELETE_CURRENT, env, deleteCurrentPerNode);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_QUERY_CURRENT, env, queryCurrentPerNode);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_FETCH_CURRENT, env, fetchCurrentPerNode);
@@ -384,8 +384,8 @@ public class ElasticsearchMonitor implements Monitor {
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_COMPLETION_SIZE, env, completionSize);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_SEGMENT_COUNT, env, segmentCount);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_SEGMENT_SIZE, env, segmentSizePerState);
-		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_FILE_DESCRIPTIOR_COUNT, env, fileDescPerStat);
-        writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_FILE_DESCRIPTIOR_LIMIT, env, fileDescLimitPerNode);
+		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_FILE_DESCRIPTOR_COUNT, env, fileDescPerStat);
+        writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_FILE_DESCRIPTOR_LIMIT, env, fileDescLimitPerNode);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_FILE_SYSTEM_SIZE, env, fileSystemPerStat);
 		writeMeasure(METRIC_GROUP_ELASTICSEARCH, MSR_PERCOLATE_COUNT, env, percolatePerState);
 	}
@@ -831,7 +831,7 @@ public class ElasticsearchMonitor implements Monitor {
 		    HttpEntity entity = response.getEntity();
 
 		    try {
-		    	return IOUtils.toString(entity.getContent());
+		    	return IOUtils.toString(entity.getContent(), "UTF-8");
 		    } finally {
 			    // ensure all content is taken out to free resources
 			    EntityUtils.consume(entity);

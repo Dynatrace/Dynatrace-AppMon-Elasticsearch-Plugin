@@ -161,7 +161,7 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 				case MSR_PERCOLATE_COUNT:
 				case MSR_FIELD_DATA_EVICTIONS:
 				case MSR_INDEXING_THROTTLE_TIME:
-				case MSR_INDEXING_CURRNT:
+				case MSR_INDEXING_CURRENT:
 				case MSR_DELETE_CURRENT:
 				case MSR_QUERY_CURRENT:
 				case MSR_FETCH_CURRENT:
@@ -204,8 +204,8 @@ public class ExecuteElasticsearchMonitorTest extends ESIntegTestCase {
 					break;
 
 				// these are negative, probably they were not computed yet after startup
-				case MSR_FILE_DESCRIPTIOR_COUNT:
-				case MSR_FILE_DESCRIPTIOR_LIMIT:
+				case MSR_FILE_DESCRIPTOR_COUNT:
+				case MSR_FILE_DESCRIPTOR_LIMIT:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value != 0);
 					break;
 

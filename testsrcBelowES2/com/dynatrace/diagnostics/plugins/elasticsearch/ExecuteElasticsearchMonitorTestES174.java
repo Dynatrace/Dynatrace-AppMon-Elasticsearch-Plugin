@@ -154,7 +154,7 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 				case MSR_PERCOLATE_COUNT:
 				case MSR_FIELD_DATA_EVICTIONS:
 				case MSR_INDEXING_THROTTLE_TIME:
-				case MSR_INDEXING_CURRNT:
+				case MSR_INDEXING_CURRENT:
 				case MSR_DELETE_CURRENT:
 				case MSR_QUERY_CURRENT:
 				case MSR_FETCH_CURRENT:
@@ -198,14 +198,14 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 				case MSR_FIELD_DATA_SIZE:
 				case MSR_FILE_SYSTEM_SIZE:
 				case MSR_TRANSLOG_SIZE:
-				case MSR_FILE_DESCRIPTIOR_LIMIT:
+				case MSR_FILE_DESCRIPTOR_LIMIT:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value >= 0);
 					found++;
 					break;
 
 				// these are negative, probably they were not computed yet after startup
 				case MSR_PERCOLATE_SIZE:
-				case MSR_FILE_DESCRIPTIOR_COUNT:
+				case MSR_FILE_DESCRIPTOR_COUNT:
 					assertTrue("Had " + value + " for " + measure.getMetricName(), value != 0);
 					found++;
 					break;
