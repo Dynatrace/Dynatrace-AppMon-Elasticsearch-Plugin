@@ -19,7 +19,6 @@ configurations {
     //
     all*.exclude group: 'org.jboss.netty'
     all*.exclude group: 'org.seleniumhq.selenium'
-    all*.exclude group: 'net.java.dev.jna'
     all*.exclude group: 'com.atlassian.jira'
     all*.exclude group: 'struts'
     all*.exclude group: 'org.apache.struts'
