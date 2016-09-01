@@ -8,8 +8,8 @@ sourceSets.test.java.srcDirs = ['testsrcES2']
 }*/
 
 dependencies {
-    testCompile 'org.elasticsearch:elasticsearch:5.0.0-alpha5'
-    testCompile 'org.elasticsearch.test:framework:5.0.0-alpha5'
+    testCompile 'org.elasticsearch:elasticsearch:5.0.0-alpha4'
+    testCompile 'org.elasticsearch.test:framework:5.0.0-alpha4'
 }
 
 configurations {
