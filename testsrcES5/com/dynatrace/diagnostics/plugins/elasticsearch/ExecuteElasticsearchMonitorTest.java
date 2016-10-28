@@ -5,6 +5,7 @@
  */
 package com.dynatrace.diagnostics.plugins.elasticsearch;
 
+import com.carrotsearch.randomizedtesting.annotations.SeedDecorators;
 import com.carrotsearch.randomizedtesting.annotations.ThreadLeakScope;
 import com.dynatrace.diagnostics.global.PluginInstanceConfig;
 import com.dynatrace.diagnostics.global.PluginPropertyInstanceConfig;
@@ -16,12 +17,14 @@ import com.dynatrace.diagnostics.sdk.MonitorMeasure30Impl;
 import com.dynatrace.diagnostics.sdk.MonitorMeasureKey;
 import com.dynatrace.diagnostics.sdk.types.StringType;
 import org.dstadler.commons.testing.MemoryLeakVerifier;
+import org.elasticsearch.ESNetty3IntegTestCase;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.ESNettyIntegTestCase;
+import org.elasticsearch.test.ESIntegTestCase;
 import org.elasticsearch.test.ESIntegTestCase.ClusterScope;
 import org.elasticsearch.test.ESIntegTestCase.Scope;
+import org.elasticsearch.test.SecurityManagerWorkaroundSeedDecorator;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
@@ -46,7 +49,11 @@ import static org.junit.Assert.*;
 @ClusterScope(scope = Scope.SUITE, numDataNodes = 1)
 //Ruxit Agent sometimes does not stop quickly enough, remove this when https://dev-jira.emea.cpwr.corp/browse/APM-49234 is fixed
 @ThreadLeakScope(com.carrotsearch.randomizedtesting.annotations.ThreadLeakScope.Scope.NONE)
-public class ExecuteElasticsearchMonitorTest extends ESNettyIntegTestCase {
+// very ugly workaround to disable the SecurityManager that Elasticsearch 2.2.0 and higher injects in Tests, it is cumbersome
+// to set up the security policy everywhere and causes lots of test-failures and strange side-effects, e.g.
+// https://issues.gradle.org/browse/GRADLE-2170, which hangs junit test runs in Gradle as a result
+@SeedDecorators(value = SecurityManagerWorkaroundSeedDecorator.class)
+public class ExecuteElasticsearchMonitorTest extends ESNetty3IntegTestCase {
 	private static final Logger log = Logger.getLogger(ExecuteElasticsearchMonitorTest.class.getName());
 
 	// which URL do we use in test
