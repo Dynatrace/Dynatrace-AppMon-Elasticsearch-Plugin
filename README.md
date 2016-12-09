@@ -12,6 +12,11 @@ Find further information in the [dynaTrace community](https://community.compuwar
 
 ## Getting started
 
+## Prerequisites
+
+* Dynatrace Application Monitoring version: 6.2+
+* Elasticsearch 1.3.9 or higher
+
 ### Install the plugin
 
 Download the .dtp file from the release-area and install it on the Dynatrace Server
