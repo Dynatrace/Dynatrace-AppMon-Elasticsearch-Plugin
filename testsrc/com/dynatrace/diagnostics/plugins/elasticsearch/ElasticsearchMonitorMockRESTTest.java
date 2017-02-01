@@ -10,9 +10,11 @@ import com.dynatrace.diagnostics.global.PluginPropertyInstanceConfig;
 import com.dynatrace.diagnostics.global.PluginPropertyTypeConfig;
 import com.dynatrace.diagnostics.global.PluginTypeConfig;
 import com.dynatrace.diagnostics.pdk.MonitorMeasure;
+import com.dynatrace.diagnostics.sdk.HostImpl;
 import com.dynatrace.diagnostics.sdk.MonitorEnvironment30Impl;
 import com.dynatrace.diagnostics.sdk.MonitorMeasure30Impl;
 import com.dynatrace.diagnostics.sdk.MonitorMeasureKey;
+import com.dynatrace.diagnostics.sdk.types.LongType;
 import com.dynatrace.diagnostics.sdk.types.StringType;
 import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.testing.MemoryLeakVerifier;
@@ -69,7 +71,8 @@ public class ElasticsearchMonitorMockRESTTest {
 
     private void runWithResponse(ElasticsearchMonitor monitor, String response, double expectedValue, double uncertainty) throws Exception {
         try (MockRESTServer server = new MockRESTServer(NanoHTTPD.HTTP_OK, "application/json", response)) {
-            MonitorEnvironment30Impl env = prepareMonitorEnvironment("http://localhost:" + server.getPort());
+
+            MonitorEnvironment30Impl env = prepareMonitorEnvironment("http","localhost" , Long.valueOf(server.getPort()));
 
             // now start executing the plugin
             monitor.setup(env);
@@ -109,31 +112,45 @@ public class ElasticsearchMonitorMockRESTTest {
 		assertEquals("Expected to find the measure exactly once, but had: " + found, 1, found);
 	}
 
-	private MonitorEnvironment30Impl prepareMonitorEnvironment(String URL) {
+	private MonitorEnvironment30Impl prepareMonitorEnvironment(String protocol, String URL,Long port) {
 		PluginInstanceConfig pluginConfig = new PluginInstanceConfig();
+
 		pluginConfig.setKey("elasticsearch");
 
 		{
-			PluginPropertyInstanceConfig environment = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_URL);
-			environment.setSourceTypeId(StringType.TYPE_ID);
-			environment.setValue(URL);
-			pluginConfig.addPluginPropertyConfig(environment);
+			PluginPropertyInstanceConfig propertyProtocol = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_PROTOCOL);
+			propertyProtocol.setSourceTypeId(StringType.TYPE_ID);
+			propertyProtocol.setValue(protocol);
+			pluginConfig.addPluginPropertyConfig(propertyProtocol);
+
+			PluginPropertyInstanceConfig propertyPort = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_PORT);
+			propertyPort.setSourceTypeId(LongType.TYPE_ID);
+			propertyPort.setValue(port.toString());
+			pluginConfig.addPluginPropertyConfig(propertyPort);
+
 		}
 
 		PluginTypeConfig pluginTypeConfig = new PluginTypeConfig();
 		pluginTypeConfig.setKey("elasticsearch");
 
 		{
-			PluginPropertyTypeConfig environmentType = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_URL, new StringType("some",
+			PluginPropertyTypeConfig propertyProtocol = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_PROTOCOL, new StringType("some",
 					""));
-			environmentType.setSourceTypeId(StringType.TYPE_ID);
-			environmentType.setType(StringType.TYPE_ID);
-			environmentType.setValue(URL);
-			pluginTypeConfig.addPluginPropertyConfig(environmentType);
+			propertyProtocol.setSourceTypeId(StringType.TYPE_ID);
+			propertyProtocol.setType(StringType.TYPE_ID);
+			propertyProtocol.setValue(protocol);
+			pluginTypeConfig.addPluginPropertyConfig(propertyProtocol);
+
+			PluginPropertyTypeConfig propertyPort = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_PORT, new LongType(1234L,
+					9200L));
+			propertyPort.setSourceTypeId(LongType.TYPE_ID);
+			propertyPort.setType(LongType.TYPE_ID);
+			propertyPort.setValue(port.toString());
+			pluginTypeConfig.addPluginPropertyConfig(propertyPort);
 		}
 
 		// register all measure groups to have them available during the test
-		MonitorEnvironment30Impl env = new MonitorEnvironment30Impl(null, pluginConfig, pluginTypeConfig, false, null);
+		MonitorEnvironment30Impl env = new MonitorEnvironment30Impl(new HostImpl(URL), pluginConfig, pluginTypeConfig, false, null);
 		{
 			for(String measure : ElasticsearchMonitor.ALL_MEASURES) {
 				createMeasure(env, ElasticsearchMonitor.METRIC_GROUP_ELASTICSEARCH, measure);

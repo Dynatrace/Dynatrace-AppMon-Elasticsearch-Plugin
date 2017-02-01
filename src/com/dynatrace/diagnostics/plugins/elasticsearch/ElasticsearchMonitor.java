@@ -10,6 +10,7 @@ import com.dynatrace.diagnostics.pdk.MonitorEnvironment;
 import com.dynatrace.diagnostics.pdk.MonitorMeasure;
 import com.dynatrace.diagnostics.pdk.Status;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.dynatrace.diagnostics.pdk.PluginEnvironment.Host;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import org.apache.commons.io.IOUtils;
@@ -188,13 +189,15 @@ public class ElasticsearchMonitor implements Monitor {
 	@Override
 	public Status setup(MonitorEnvironment env) throws Exception {
 
-		port = env.getConfigLong(ENV_CONFIG_PORT).intValue();
+		Long tempPort = env.getConfigLong(ENV_CONFIG_PORT);
+
 		protocol =  env.getConfigString(ENV_CONFIG_PROTOCOL);
-		url = protocol+"://"+env.getHost().getAddress()+":"+port;
-		if (url == null || url.isEmpty())
+		Host host = env.getHost();
+		if ( protocol ==null || tempPort==null || host == null || host.getAddress() == null || host.getAddress().isEmpty())
 			throw new IllegalArgumentException(
 					"Parameter <url> must not be empty");
-
+		port = tempPort.intValue();
+		url = protocol+"://"+host.getAddress()+":"+port;
 		// normalize URL
 		url = StringUtils.removeEnd(url, "/");
 
