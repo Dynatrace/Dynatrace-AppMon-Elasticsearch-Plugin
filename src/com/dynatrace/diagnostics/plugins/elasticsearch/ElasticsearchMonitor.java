@@ -51,7 +51,8 @@ public class ElasticsearchMonitor implements Monitor {
 	private static final Logger log = Logger.getLogger(ElasticsearchMonitor.class.getName());
 
 	/************************************** Config properties **************************/
-	protected static final String ENV_CONFIG_URL = "url";
+	protected static final String ENV_CONFIG_PORT = "port";
+	protected static final String ENV_CONFIG_PROTOCOL = "protocol";
 	protected static final String ENV_CONFIG_USER = "user";
 	protected static final String ENV_CONFIG_PASSWORD = "password";
 	protected static final String ENV_CONFIG_TIMEOUT = "timeout";
@@ -165,6 +166,8 @@ public class ElasticsearchMonitor implements Monitor {
 	/************************************** Variables for Configuration items **************************/
 
 	private String url;
+	private int port;
+	private String protocol;
 	private String user;
 	private String password;
 	private long timeout;
@@ -184,7 +187,10 @@ public class ElasticsearchMonitor implements Monitor {
 	 */
 	@Override
 	public Status setup(MonitorEnvironment env) throws Exception {
-		url = env.getConfigString(ENV_CONFIG_URL);
+
+		port = env.getConfigLong(ENV_CONFIG_PORT).intValue();
+		protocol =  env.getConfigString(ENV_CONFIG_PROTOCOL);
+		url = protocol+"://"+env.getHost().getAddress()+":"+port;
 		if (url == null || url.isEmpty())
 			throw new IllegalArgumentException(
 					"Parameter <url> must not be empty");
