@@ -16,6 +16,7 @@ import com.dynatrace.diagnostics.sdk.HostImpl;
 import com.dynatrace.diagnostics.sdk.MonitorEnvironment30Impl;
 import com.dynatrace.diagnostics.sdk.MonitorMeasure30Impl;
 import com.dynatrace.diagnostics.sdk.MonitorMeasureKey;
+import com.dynatrace.diagnostics.sdk.types.BooleanType;
 import com.dynatrace.diagnostics.sdk.types.LongType;
 import com.dynatrace.diagnostics.sdk.types.StringType;
 import org.dstadler.commons.testing.MemoryLeakVerifier;
@@ -253,6 +254,12 @@ public class ExecuteElasticsearchMonitorTest extends ESNetty3IntegTestCase {
 			propertyPort.setValue(PORT.toString());
 			pluginConfig.addPluginPropertyConfig(propertyPort);
 
+			PluginPropertyInstanceConfig useFullConfiguration = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION);
+			useFullConfiguration.setSourceTypeId(BooleanType.TYPE_ID);
+			useFullConfiguration.setValue(Boolean.FALSE.toString());
+			pluginConfig.addPluginPropertyConfig(useFullConfiguration);
+
+
 		}
 
 		PluginTypeConfig pluginTypeConfig = new PluginTypeConfig();
@@ -272,6 +279,11 @@ public class ExecuteElasticsearchMonitorTest extends ESNetty3IntegTestCase {
 			propertyPort.setType(LongType.TYPE_ID);
 			propertyPort.setValue(PORT.toString());
 			pluginTypeConfig.addPluginPropertyConfig(propertyPort);
+
+			PluginPropertyTypeConfig useFullConfiguration = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION,new BooleanType(Boolean.FALSE,Boolean.FALSE));
+			useFullConfiguration.setSourceTypeId(BooleanType.TYPE_ID);
+			useFullConfiguration.setValue(Boolean.FALSE.toString());
+			pluginTypeConfig.addPluginPropertyConfig(useFullConfiguration);
 		}
 
 		// register all measure groups to have them available during the test

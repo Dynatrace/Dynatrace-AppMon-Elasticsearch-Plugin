@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.dynatrace.diagnostics.sdk.HostImpl;
+import com.dynatrace.diagnostics.sdk.types.BooleanType;
 import com.dynatrace.diagnostics.sdk.types.LongType;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -238,6 +239,11 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 			propertyPort.setValue(PORT.toString());
 			pluginConfig.addPluginPropertyConfig(propertyPort);
 
+			PluginPropertyInstanceConfig useFullConfiguration = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION);
+			useFullConfiguration.setSourceTypeId(BooleanType.TYPE_ID);
+			useFullConfiguration.setValue(Boolean.FALSE.toString());
+			pluginConfig.addPluginPropertyConfig(useFullConfiguration);
+
 		}
 
 		PluginTypeConfig pluginTypeConfig = new PluginTypeConfig();
@@ -257,6 +263,11 @@ public class ExecuteElasticsearchMonitorTestES174 extends ElasticsearchIntegrati
 			propertyPort.setType(LongType.TYPE_ID);
 			propertyPort.setValue(PORT.toString());
 			pluginTypeConfig.addPluginPropertyConfig(propertyPort);
+
+			PluginPropertyTypeConfig useFullConfiguration = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION,new BooleanType(Boolean.FALSE,Boolean.FALSE));
+			useFullConfiguration.setSourceTypeId(BooleanType.TYPE_ID);
+			useFullConfiguration.setValue(Boolean.FALSE.toString());
+			pluginTypeConfig.addPluginPropertyConfig(useFullConfiguration);
 		}
 
 		// register all measure groups to have them available during the test
