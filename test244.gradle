@@ -3,8 +3,8 @@ apply from: 'common.gradle'
 sourceSets.test.java.srcDirs = ['testsrcES2']
 
 dependencies {
-    testCompile 'org.elasticsearch:elasticsearch:2.4.2'
-    testCompile 'org.elasticsearch:elasticsearch:2.4.2:tests'
+    testCompile 'org.elasticsearch:elasticsearch:2.4.4'
+    testCompile 'org.elasticsearch:elasticsearch:2.4.4:tests'
     testCompile 'org.apache.lucene:lucene-test-framework:5.5.2'
 }
 
