@@ -7,16 +7,14 @@ package com.dynatrace.diagnostics.plugins.elasticsearch;
 
 import com.dynatrace.diagnostics.pdk.MonitorEnvironment;
 import com.dynatrace.diagnostics.pdk.MonitorMeasure;
-import com.dynatrace.diagnostics.pdk.PluginEnvironment;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.dynatrace.diagnostics.sdk.HostImpl;
 import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.TestHelpers;
 import org.junit.Test;
-import com.dynatrace.diagnostics.sdk.HostImpl;
+
 import java.util.Collection;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.fail;
@@ -32,8 +30,6 @@ public class ElasticsearchMonitorTest {
             "\"indices\": {}}";
     private static final String TEST_RESPONSE = "{\"nodes\":{\"node\":{},\"node\":{\"jvm\":{},\"indices\":{}}}," +
             "\"indices\": {}}";
-
-	private static final Logger log = Logger.getLogger(ElasticsearchMonitorTest.class.getName());
 
     @Test
 	public void testSetupEmptyConf() throws Exception {
@@ -213,7 +209,7 @@ public class ElasticsearchMonitorTest {
         }
     }
 
-    private void expectSetup(MonitorEnvironment env, String protocol,String url, Long port) {
+    private void expectSetup(MonitorEnvironment env, String protocol, String url, Long port) {
 		expect(env.getConfigLong(ElasticsearchMonitor.ENV_CONFIG_PORT)).andReturn(port);
 		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_PROTOCOL)).andReturn(protocol);
 		expect(env.getConfigBoolean(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION)).andReturn(Boolean.FALSE);
@@ -267,7 +263,7 @@ public class ElasticsearchMonitorTest {
 
     private MonitorEnvironment prepareMonitoringEnvironment(ElasticsearchMonitor monitor, MockRESTServer server) throws Exception {
         MonitorEnvironment env = createStrictMock(MonitorEnvironment.class);
-        expectSetup(env, "http","localhost",  Long.valueOf(server.getPort()));
+        expectSetup(env, "http","localhost", (long) server.getPort());
 
         replay(env);
 
