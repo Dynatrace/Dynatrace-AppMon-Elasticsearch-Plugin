@@ -10,6 +10,7 @@ import com.dynatrace.diagnostics.pdk.MonitorEnvironment;
 import com.dynatrace.diagnostics.pdk.MonitorMeasure;
 import com.dynatrace.diagnostics.pdk.Status;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.dynatrace.diagnostics.pdk.PluginEnvironment.Host;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import org.apache.commons.io.IOUtils;
@@ -51,7 +52,10 @@ public class ElasticsearchMonitor implements Monitor {
 	private static final Logger log = Logger.getLogger(ElasticsearchMonitor.class.getName());
 
 	/************************************** Config properties **************************/
+	protected static final String ENV_CONFIG_USE_FULL_URL_CONFIGURATION = "useFullUrlConfiguration";
 	protected static final String ENV_CONFIG_URL = "url";
+	protected static final String ENV_CONFIG_PORT = "port";
+	protected static final String ENV_CONFIG_PROTOCOL = "protocol";
 	protected static final String ENV_CONFIG_USER = "user";
 	protected static final String ENV_CONFIG_PASSWORD = "password";
 	protected static final String ENV_CONFIG_TIMEOUT = "timeout";
@@ -164,7 +168,10 @@ public class ElasticsearchMonitor implements Monitor {
 
 	/************************************** Variables for Configuration items **************************/
 
+	private Boolean useFullUrlConfiguration = false;
 	private String url;
+	private int port;
+	private String protocol;
 	private String user;
 	private String password;
 	private long timeout;
@@ -184,11 +191,25 @@ public class ElasticsearchMonitor implements Monitor {
 	 */
 	@Override
 	public Status setup(MonitorEnvironment env) throws Exception {
-		url = env.getConfigString(ENV_CONFIG_URL);
-		if (url == null || url.isEmpty())
-			throw new IllegalArgumentException(
-					"Parameter <url> must not be empty");
 
+		Long tempPort = env.getConfigLong(ENV_CONFIG_PORT);
+
+		protocol =  env.getConfigString(ENV_CONFIG_PROTOCOL);
+
+		useFullUrlConfiguration =env.getConfigBoolean(ENV_CONFIG_USE_FULL_URL_CONFIGURATION);
+		if(useFullUrlConfiguration) {
+			url = env.getConfigString(ENV_CONFIG_URL);
+			if (url == null || url.isEmpty()) {
+				throw new IllegalArgumentException("Parameter <url> must not be empty");
+			}
+		}
+		else {
+			Host host = env.getHost();
+			if (protocol == null || tempPort == null || host == null || host.getAddress() == null || host.getAddress().isEmpty())
+				throw new IllegalArgumentException("Parameters <protocol>, <port> and the dynatrace native host list  must not be empty");
+			port = tempPort.intValue();
+			url = protocol + "://" + host.getAddress() + ":" + port;
+		}
 		// normalize URL
 		url = StringUtils.removeEnd(url, "/");
 

@@ -12,9 +12,12 @@ import com.dynatrace.diagnostics.global.PluginPropertyInstanceConfig;
 import com.dynatrace.diagnostics.global.PluginPropertyTypeConfig;
 import com.dynatrace.diagnostics.global.PluginTypeConfig;
 import com.dynatrace.diagnostics.pdk.MonitorMeasure;
+import com.dynatrace.diagnostics.sdk.HostImpl;
 import com.dynatrace.diagnostics.sdk.MonitorEnvironment30Impl;
 import com.dynatrace.diagnostics.sdk.MonitorMeasure30Impl;
 import com.dynatrace.diagnostics.sdk.MonitorMeasureKey;
+import com.dynatrace.diagnostics.sdk.types.BooleanType;
+import com.dynatrace.diagnostics.sdk.types.LongType;
 import com.dynatrace.diagnostics.sdk.types.StringType;
 import org.dstadler.commons.testing.MemoryLeakVerifier;
 import org.elasticsearch.ESNetty3IntegTestCase;
@@ -57,7 +60,9 @@ public class ExecuteElasticsearchMonitorTest extends ESNetty3IntegTestCase {
 	private static final Logger log = Logger.getLogger(ExecuteElasticsearchMonitorTest.class.getName());
 
 	// which URL do we use in test
-	private static final String URL = "http://localhost:19300";
+	private static final Long PORT = 19300L;
+	private static final String PROTOCOL = "http";
+	private static final String URL = "localhost";
 
 	private static MemoryLeakVerifier verifier = new MemoryLeakVerifier();
 
@@ -235,34 +240,61 @@ public class ExecuteElasticsearchMonitorTest extends ESNetty3IntegTestCase {
 
 	private MonitorEnvironment30Impl prepareMonitorEnvironment() {
 		PluginInstanceConfig pluginConfig = new PluginInstanceConfig();
+
 		pluginConfig.setKey("elasticsearch");
 
 		{
-			PluginPropertyInstanceConfig environment = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_URL);
-			environment.setSourceTypeId(StringType.TYPE_ID);
-			environment.setValue(URL);
-			pluginConfig.addPluginPropertyConfig(environment);
+			PluginPropertyInstanceConfig propertyProtocol = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_PROTOCOL);
+			propertyProtocol.setSourceTypeId(StringType.TYPE_ID);
+			propertyProtocol.setValue(PROTOCOL);
+			pluginConfig.addPluginPropertyConfig(propertyProtocol);
+
+			PluginPropertyInstanceConfig propertyPort = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_PORT);
+			propertyPort.setSourceTypeId(LongType.TYPE_ID);
+			propertyPort.setValue(PORT.toString());
+			pluginConfig.addPluginPropertyConfig(propertyPort);
+
+			PluginPropertyInstanceConfig useFullConfiguration = new PluginPropertyInstanceConfig(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION);
+			useFullConfiguration.setSourceTypeId(BooleanType.TYPE_ID);
+			useFullConfiguration.setValue(Boolean.FALSE.toString());
+			pluginConfig.addPluginPropertyConfig(useFullConfiguration);
+
+
 		}
 
 		PluginTypeConfig pluginTypeConfig = new PluginTypeConfig();
 		pluginTypeConfig.setKey("elasticsearch");
 
 		{
-			PluginPropertyTypeConfig environmentType = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_URL, new StringType("some",
+			PluginPropertyTypeConfig propertyProtocol = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_PROTOCOL, new StringType("some",
 					""));
-			environmentType.setSourceTypeId(StringType.TYPE_ID);
-			environmentType.setType(StringType.TYPE_ID);
-			environmentType.setValue(URL);
-			pluginTypeConfig.addPluginPropertyConfig(environmentType);
+			propertyProtocol.setSourceTypeId(StringType.TYPE_ID);
+			propertyProtocol.setType(StringType.TYPE_ID);
+			propertyProtocol.setValue(PROTOCOL);
+			pluginTypeConfig.addPluginPropertyConfig(propertyProtocol);
+
+			PluginPropertyTypeConfig propertyPort = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_PORT, new LongType(0L,
+					9200L));
+			propertyPort.setSourceTypeId(LongType.TYPE_ID);
+			propertyPort.setType(LongType.TYPE_ID);
+			propertyPort.setValue(PORT.toString());
+			pluginTypeConfig.addPluginPropertyConfig(propertyPort);
+
+			PluginPropertyTypeConfig useFullConfiguration = new PluginPropertyTypeConfig(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION,new BooleanType(Boolean.FALSE,Boolean.FALSE));
+			useFullConfiguration.setSourceTypeId(BooleanType.TYPE_ID);
+			useFullConfiguration.setValue(Boolean.FALSE.toString());
+			pluginTypeConfig.addPluginPropertyConfig(useFullConfiguration);
 		}
 
 		// register all measure groups to have them available during the test
-		MonitorEnvironment30Impl env = new MonitorEnvironment30Impl(null, pluginConfig, pluginTypeConfig, false, null);
+
+		MonitorEnvironment30Impl env = new MonitorEnvironment30Impl(new HostImpl(URL), pluginConfig, pluginTypeConfig, false, null);
 		{
 			for(String measure : ElasticsearchMonitor.ALL_MEASURES) {
 				createMeasure(env, ElasticsearchMonitor.METRIC_GROUP_ELASTICSEARCH, measure);
 			}
 		}
+
 		return env;
 	}
 

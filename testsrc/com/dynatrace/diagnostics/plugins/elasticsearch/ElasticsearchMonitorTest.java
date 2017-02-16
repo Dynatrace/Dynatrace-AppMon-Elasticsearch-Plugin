@@ -7,13 +7,16 @@ package com.dynatrace.diagnostics.plugins.elasticsearch;
 
 import com.dynatrace.diagnostics.pdk.MonitorEnvironment;
 import com.dynatrace.diagnostics.pdk.MonitorMeasure;
+import com.dynatrace.diagnostics.pdk.PluginEnvironment;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.dstadler.commons.http.NanoHTTPD;
 import org.dstadler.commons.testing.MockRESTServer;
 import org.dstadler.commons.testing.TestHelpers;
 import org.junit.Test;
-
+import com.dynatrace.diagnostics.sdk.HostImpl;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Logger;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.fail;
@@ -30,13 +33,20 @@ public class ElasticsearchMonitorTest {
     private static final String TEST_RESPONSE = "{\"nodes\":{\"node\":{},\"node\":{\"jvm\":{},\"indices\":{}}}," +
             "\"indices\": {}}";
 
+	private static final Logger log = Logger.getLogger(ElasticsearchMonitorTest.class.getName());
+
     @Test
 	public void testSetupEmptyConf() throws Exception {
 		ElasticsearchMonitor monitor = new ElasticsearchMonitor();
 
 		MonitorEnvironment env = createStrictMock(MonitorEnvironment.class);
 
-		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_URL)).andReturn("");
+
+		expect(env.getConfigLong(ElasticsearchMonitor.ENV_CONFIG_PORT)).andReturn(0L);
+		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_PROTOCOL)).andReturn("");
+		expect(env.getConfigBoolean(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION)).andReturn(Boolean.FALSE);
+
+		expect(env.getHost()).andReturn(new HostImpl(""));
 
 		replay(env);
 
@@ -56,7 +66,11 @@ public class ElasticsearchMonitorTest {
 
 		MonitorEnvironment env = createStrictMock(MonitorEnvironment.class);
 
-		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_URL)).andReturn(null);
+
+		expect(env.getConfigLong(ElasticsearchMonitor.ENV_CONFIG_PORT)).andReturn(0L);
+		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_PROTOCOL)).andReturn("");
+		expect(env.getConfigBoolean(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION)).andReturn(Boolean.FALSE);
+		expect(env.getHost()).andReturn(new HostImpl(""));
 
 		replay(env);
 
@@ -76,7 +90,7 @@ public class ElasticsearchMonitorTest {
 
 		MonitorEnvironment env = createStrictMock(MonitorEnvironment.class);
 
-		expectSetup(env, "invalid");
+		expectSetup(env,"http", "invalid",-1L);
 
 		replay(env);
 
@@ -92,6 +106,8 @@ public class ElasticsearchMonitorTest {
 
 		MonitorEnvironment env = createNiceMock(MonitorEnvironment.class);
 
+		//default value is false
+		expect(env.getConfigBoolean(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION)).andReturn(Boolean.FALSE);
 		replay(env);
 		try {
 			monitor.setup(env);
@@ -103,7 +119,12 @@ public class ElasticsearchMonitorTest {
 
 		reset(env);
 
-		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_URL)).andReturn("http://localhost:9200");
+
+		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_PROTOCOL)).andReturn("http");
+		expect(env.getConfigLong(ElasticsearchMonitor.ENV_CONFIG_PORT)).andReturn(9200L);
+		expect(env.getConfigBoolean(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION)).andReturn(Boolean.FALSE);
+		expect(env.getHost()).andReturn(new HostImpl("localhost"));
+
 		replay(env);
 		monitor.setup(env);
 		verify(env);
@@ -192,8 +213,11 @@ public class ElasticsearchMonitorTest {
         }
     }
 
-    private void expectSetup(MonitorEnvironment env, String url) {
-		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_URL)).andReturn(url);
+    private void expectSetup(MonitorEnvironment env, String protocol,String url, Long port) {
+		expect(env.getConfigLong(ElasticsearchMonitor.ENV_CONFIG_PORT)).andReturn(port);
+		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_PROTOCOL)).andReturn(protocol);
+		expect(env.getConfigBoolean(ElasticsearchMonitor.ENV_CONFIG_USE_FULL_URL_CONFIGURATION)).andReturn(Boolean.FALSE);
+		expect(env.getHost()).andReturn(new HostImpl(url));
 		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_USER)).andReturn("invalid");
 		expect(env.getConfigPassword(ElasticsearchMonitor.ENV_CONFIG_PASSWORD)).andReturn("invalid");
 		expect(env.getConfigString(ElasticsearchMonitor.ENV_CONFIG_TIMEOUT)).andReturn(null);
@@ -243,7 +267,7 @@ public class ElasticsearchMonitorTest {
 
     private MonitorEnvironment prepareMonitoringEnvironment(ElasticsearchMonitor monitor, MockRESTServer server) throws Exception {
         MonitorEnvironment env = createStrictMock(MonitorEnvironment.class);
-        expectSetup(env, "http://localhost:" + server.getPort());
+        expectSetup(env, "http","localhost",  Long.valueOf(server.getPort()));
 
         replay(env);
 

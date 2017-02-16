@@ -12,10 +12,25 @@
       <!-- supportlevel value="certified"/ -->
     </information>
     <configuration>
-		<property key="url" label="Elasticsearch REST URL" type="string" description="The URL where the Elasticsearch Cluster REST interface is available" default="http://localhost:9200" multiline="false" />
-		<property key="user" label="User" type="string" description="User name to use to connect via Basic Authentication, leave empty for unauthenticated access" default="" multiline="false" />
-		<property key="password" label="Password" type="password" description="Password if authentication is required, leave empty for unauthenticated access" default="" />
-		<property key="timeout" label="Timeout" type="long" description="Timeout in milliseconds used when accessing the REST interface via HTTP" default="60000" />
+      <property key="useFullUrlConfiguration" label="useFullUrlConfiguration" type="boolean" description="when true url is used to connect to Elasticsearch when false the Dynatrace native server list is used" default="true" />
+      <property key="url" label="Elasticsearch REST URL" type="string" description="The URL where the Elasticsearch Cluster REST interface is available" default="http://localhost:9200" multiline="false" >
+        <visibility>
+          <rule key="useFullUrlConfiguration" value="true" />
+        </visibility>
+      </property>  
+      <property key="port" label="Elasticsearch REST port" type="long" description="The port where the Elasticsearch Cluster REST interface is available" default="9200" multiline="false" >
+        <visibility>
+          <rule key="useFullUrlConfiguration" value="false" />
+        </visibility>
+      </property>     
+      <property key="protocol" label="Elasticsearch REST protocol" type="string" description="The protocol where the Elasticsearch Cluster REST interface is available" default="http" multiline="false" >
+        <visibility>
+          <rule key="useFullUrlConfiguration" value="false" />
+        </visibility>
+      </property>  
+      <property key="user" label="User" type="string" description="User name to use to connect via Basic Authentication, leave empty for unauthenticated access" default="" multiline="false" />
+      <property key="password" label="Password" type="password" description="Password if authentication is required, leave empty for unauthenticated access" default="" />
+      <property key="timeout" label="Timeout" type="long" description="Timeout in milliseconds used when accessing the REST interface via HTTP" default="60000" />
     </configuration>
   </extension>
 
