@@ -3,9 +3,9 @@ apply from: 'common.gradle'
 sourceSets.test.java.srcDirs = ['testsrcES5']
 
 dependencies {
-    testCompile 'org.elasticsearch:elasticsearch:5.2.2'
-    testCompile 'org.elasticsearch.test:framework:5.2.2'
-    testCompile 'org.elasticsearch.plugin:transport-netty3-client:5.2.2'
+    testCompile 'org.elasticsearch:elasticsearch:5.3.0'
+    testCompile 'org.elasticsearch.test:framework:5.3.0'
+    testCompile 'org.elasticsearch.plugin:transport-netty3-client:5.3.0'
     testCompile 'org.apache.logging.log4j:log4j-core:2.7'
 }
 

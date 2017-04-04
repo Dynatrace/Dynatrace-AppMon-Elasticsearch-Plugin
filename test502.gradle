@@ -2,11 +2,6 @@ apply from: 'common.gradle'
 
 sourceSets.test.java.srcDirs = ['testsrcES5']
 
-/*repositories {
-    // some alpha-versions of 5.0 require additional snapshot-repositories
-    maven { url 'http://download.elastic.co/lucenesnapshots/f0aa4fc' }
-}*/
-
 dependencies {
     testCompile 'org.elasticsearch:elasticsearch:5.0.2'
     testCompile 'org.elasticsearch.test:framework:5.0.2'
