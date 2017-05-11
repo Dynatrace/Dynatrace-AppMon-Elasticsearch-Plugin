@@ -119,10 +119,10 @@ configurations {
 
 dependencies {
     junitAnt 'junit:junit:4.+'
-    junitAnt('org.apache.ant:ant-junit:1.9.7') {
+    junitAnt('org.apache.ant:ant-junit:1.9.9') {
         transitive = false
     }
-    junitAnt('org.apache.ant:ant-junit4:1.9.7') {
+    junitAnt('org.apache.ant:ant-junit4:1.9.9') {
         transitive = false
      }
 }
