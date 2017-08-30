@@ -5,6 +5,19 @@
  */
 package com.dynatrace.diagnostics.plugins.elasticsearch;
 
+import static com.dynatrace.diagnostics.plugins.elasticsearch.ElasticsearchMonitor.MSR_DOCUMENT_COUNT_PER_SECOND;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Map;
+import java.util.logging.Logger;
+
+import org.dstadler.commons.http.NanoHTTPD;
+import org.dstadler.commons.testing.MemoryLeakVerifier;
+import org.dstadler.commons.testing.MockRESTServer;
+import org.junit.AfterClass;
+import org.junit.Test;
+
 import com.dynatrace.diagnostics.global.PluginInstanceConfig;
 import com.dynatrace.diagnostics.global.PluginPropertyInstanceConfig;
 import com.dynatrace.diagnostics.global.PluginPropertyTypeConfig;
@@ -17,18 +30,6 @@ import com.dynatrace.diagnostics.sdk.MonitorMeasureKey;
 import com.dynatrace.diagnostics.sdk.types.BooleanType;
 import com.dynatrace.diagnostics.sdk.types.LongType;
 import com.dynatrace.diagnostics.sdk.types.StringType;
-import org.dstadler.commons.http.NanoHTTPD;
-import org.dstadler.commons.testing.MemoryLeakVerifier;
-import org.dstadler.commons.testing.MockRESTServer;
-import org.junit.AfterClass;
-import org.junit.Test;
-
-import java.util.Map;
-import java.util.logging.Logger;
-
-import static com.dynatrace.diagnostics.plugins.elasticsearch.ElasticsearchMonitor.MSR_DOCUMENT_COUNT_PER_SECOND;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Simple test program which invokes the Elasticsearch Monitor with
@@ -63,7 +64,7 @@ public class ElasticsearchMonitorMockRESTTest {
         Thread.sleep(1000);
         runWithResponse(monitor, DOC500_RESPONSE, 0, 0.01);   // no negative value should be returned on lower measure than before
         Thread.sleep(1000);
-        runWithResponse(monitor, DOC1000_RESPONSE, 500, 120);   // high uncertainty needed here as it depends on timing
+        runWithResponse(monitor, DOC1000_RESPONSE, 500, 140);   // high uncertainty needed here as it depends on timing
         Thread.sleep(1000);
         runWithResponse(monitor, DOC1000_RESPONSE, 0, 0.01);
 

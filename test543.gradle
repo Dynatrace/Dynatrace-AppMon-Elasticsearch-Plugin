@@ -17,6 +17,9 @@ configurations {
     // the new securemock contains these as well
     // See https://github.com/elastic/elasticsearch/issues/18063
     all*.exclude group: 'org.objenesis', module: 'objenesis'
+
+    // starting with 5.4.x Elasticsearch includes it's own version of jna!
+    all*.exclude group: 'net.java.dev.jna', module: 'jna'
 }
 
 apply from: 'common22x.gradle'
