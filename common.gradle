@@ -46,7 +46,7 @@ configurations {
 
 dependencies {
     compile 'commons-io:commons-io:2.5'
-    compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'org.apache.commons:commons-lang3:3.6'
     compile 'com.google.guava:guava:20.0'
     compile 'org.apache.httpcomponents:httpclient:4.5.2'
     compile 'com.fasterxml.jackson.core:jackson-core:2.6.7'
@@ -67,7 +67,7 @@ dependencies {
     testCompile 'org.easymock:easymock:3.4'
 
     // for MockRESTServer and MemoryLeakVerifier
-    testCompile 'org.dstadler:commons-test:1.0.0.12'
+    testCompile 'org.dstadler:commons-test:1.0.0.13'
 }
 
 tasks.withType(JavaCompile) {
