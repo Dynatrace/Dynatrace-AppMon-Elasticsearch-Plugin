@@ -9,4 +9,4 @@ install: ./gradlew compileJava
 script: ./gradlew eclipse check plugin jacocoTestReport javadoc && ./checkElasticsearchVersions.sh
 
 after_failure:
-- cat build/test-results/*.xml
+- cat build/test-results/test/*.xml
